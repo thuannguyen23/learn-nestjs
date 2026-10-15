@@ -256,7 +256,7 @@ $$\text{docker } \underbrace{\langle\text{object}\rangle}_{\text{Đối tượng
 
 Bấm `▶ Run` để xem phiên bản của cả Client lẫn Server (Daemon):
 
-```bash
+```bash {"terminalRows":"20"}
 docker version
 ```
 
@@ -332,7 +332,7 @@ echo "🧹 Đã dừng và xóa sạch container my-nginx!"
 
 👉 **Sau khi tự suy nghĩ, bạn có thể bấm `▶ Run` bên dưới để kiểm tra lời giải thực tế:**
 
-```bash
+```bash {"terminalRows":"30"}
 echo "--- Giải Bài 1 ---"
 docker container run --rm alpine echo "Xin chào Docker từ Alpine!"
 
