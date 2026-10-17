@@ -211,7 +211,7 @@ Container là một môi trường ảo hóa ở tầng hệ điều hành, có 
 
 ### 1.4. Kiến trúc của Docker (Client – Host – Registry)
 
-```md
+```md {"terminalRows":"30"}
 +-------------------+          REST API          +----------------------------------------+          Internet          +-----------------------+
 |   DOCKER CLIENT   | -------------------------> |              DOCKER HOST               | -------------------------> |    DOCKER REGISTRY    |
 | (Lệnh CLI bạn gõ) |                            |  +----------------------------------+  |                            |  (Kho chứa: DockerHub,|
@@ -406,7 +406,7 @@ Một **Docker Image** không phải là 1 cục file khổng lồ nguyên khố
 
 Hãy kéo image `node:20-alpine` về và soi từng lớp bên trong nó:
 
-```bash
+```bash {"terminalRows":"30"}
 docker image pull node:20-alpine
 echo ""
 echo "=== CÁC LAYER CỦA IMAGE node:20-alpine ==="
@@ -459,7 +459,7 @@ docker container rm -f demo-writable
 
 Kỹ thuật này cực kỳ hữu ích khi bạn cần chép Image sang một máy chủ nội bộ (ngân hàng, doanh nghiệp) bị khóa Internet:
 
-```bash
+```bash {"terminalRows":"30"}
 mkdir -p docker-mastery-lab/tar-demo
 
 # 1. Xuất image 'image-from-commit:v1' ra thành file output.tar
@@ -489,19 +489,69 @@ rm -rf docker-mastery-lab/tar-demo
 
 ## 1. Lý thuyết Chuyên sâu
 
-### 1.1. Bảng phân biệt các chỉ thị dễ nhầm lẫn nhất trong `Dockerfile`
+### 1.1. Cẩm nang Chỉ thị Dockerfile: 4 Nhóm Cốt Lõi & Bẫy Lỗi Production
 
-| Cặp chỉ thị                   | Sự khác biệt cốt lõi & Quy tắc thực chiến                                                                                                                                                                                                                                                                                      |
-| :---------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`RUN`** vs **`CMD`**        | - **`RUN`** chạy trong lúc **BUILD Image** (để cài gói phần mềm, biên dịch code, tạo ra layer mới).<br>- **`CMD`** chạy vào thời điểm **CONTAINER KHỞI ĐỘNG** (chỉ định lệnh mặc định để bật ứng dụng).                                                                                                                        |
-| **`COPY`** vs **`ADD`**       | - **`COPY`**: Chỉ làm đúng 1 việc minh bạch là chép file/thư mục từ máy Host vào Image.<br>- **`ADD`**: Ngoài việc copy còn tự động giải nén file `.tar.gz` và tải được link URL $\rightarrow$ dễ gây rủi ro bảo mật ngoài ý muốn. **Quy tắc: Luôn dùng `COPY`, chỉ dùng `ADD` khi thực sự muốn bung nén file `.tar` nội bộ.** |
-| **`ARG`** vs **`ENV`**        | - **`ARG`**: Biến chỉ tồn tại trong lúc **build image** (biến mất khi container chạy).<br>- **`ENV`**: Biến môi trường tồn tại **cả lúc build lẫn lúc container đang chạy** (code đọc được qua `process.env`).                                                                                                                 |
-| **`CMD`** vs **`ENTRYPOINT`** | - **`CMD`**: Lệnh mặc định nhưng **dễ dàng bị ghi đè** nếu người dùng truyền lệnh khác ở cuối `docker run`.<br>- **`ENTRYPOINT`**: Khóa chặt chương trình thực thi chính của container; mọi tham số truyền thêm ở `docker run` sẽ biến thành tham số đuôi cho `ENTRYPOINT`.                                                    |
+Trong môi trường Production, việc dùng sai một chỉ thị Dockerfile có thể dẫn đến **lộ Secret, không thể Graceful Shutdown, app bị treo mà Docker không biết, hoặc bị lỗi quyền truy cập file**. Dưới đây là phân loại 4 nhóm chỉ thị quan trọng nhất:
 
-> ⚠️ **Lưu ý sống còn cho Node.js/NestJS (Exec Form vs Shell Form):**
->
-> - **Shell Form:** `CMD npm run start` $\rightarrow$ Docker sẽ bọc lệnh của bạn trong `/bin/sh -c "npm run start"`. Lúc này `/bin/sh` chiếm `PID 1` và **nuốt mất tín hiệu `SIGTERM`** khi tắt container, khiến ứng dụng không thể Graceful Shutdown và bị treo 10 giây trước khi bị giết cưỡng bức!
-> - **Exec Form (Bắt buộc dùng cho Production):** `CMD ["node", "dist/main.js"]` $\rightarrow$ Tiến trình `node` trực tiếp làm `PID 1` và nhận tín hiệu tắt an toàn ngay lập tức.
+---
+
+#### 🟢 NHÓM 1: NHÓM VẬN HÀNH (EXECUTION) — `RUN` vs `CMD` vs `ENTRYPOINT`
+
+| Chỉ thị          | Thời điểm chạy                  | Mục đích                                                               | Bị ghi đè bởi `docker run`?                            |
+| :--------------- | :------------------------------ | :--------------------------------------------------------------------- | :----------------------------------------------------- |
+| **`RUN`**        | **Build time** (`docker build`) | Cài package, compile TypeScript $\rightarrow$ Tạo Layer mới vĩnh viễn. | ❌ Không thể                                           |
+| **`CMD`**        | **Runtime** (`docker run`)      | Khởi chạy chương trình chính mặc định của container.                   | ✅ **Bị ghi đè hoàn toàn** nếu truyền lệnh mới         |
+| **`ENTRYPOINT`** | **Runtime** (`docker run`)      | Khóa chặt chương trình chạy chính của container.                       | 🔒 Không bị ghi đè, tham số truyền vào biến thành đuôi |
+
+##### 🎯 Ma trận phối hợp Vàng: `ENTRYPOINT` + `CMD` (Best Practice Production)
+
+Khi xây dựng Image chuẩn quốc tế, người ta không dùng đơn lẻ mà **kết hợp cả hai**:
+
+- `ENTRYPOINT ["chương_trình_chính"]` $\rightarrow$ Đóng vai trò cố định chương trình thực thi.
+- `CMD ["tham_số_mặc_định"]` $\rightarrow$ Đóng vai trò tham số gợi ý, người dùng có thể đổi khi chạy.
+
+```dockerfile
+# Ví dụ: Chạy NestJS với file migration tự động
+ENTRYPOINT ["node"]
+CMD ["dist/main.js"]
+# -> docker run my-app                     => Chạy: node dist/main.js
+# -> docker run my-app dist/migration.js   => Chạy: node dist/migration.js (CMD bị thay thế!)
+```
+
+##### ⚠️ Bẫy lỗi Production #1: Shell Form vs Exec Form (Bẫy nuốt tín hiệu `SIGTERM`)
+
+- ❌ **Shell Form:** `CMD npm run start` hoặc `CMD node dist/main.js`
+  $\rightarrow$ Docker sẽ bọc lệnh vào `/bin/sh -c "..."`. Lúc này tiến trình shell `/bin/sh` chiếm giữ `PID 1` và **nuốt chửng tín hiệu `SIGTERM`** khi bạn gõ `docker stop`. App NestJS không thể đóng kết nối DB, bị treo cứng 10 giây trước khi Docker buộc phải dùng `SIGKILL` (giết cưỡng bức)!
+- ✅ **Exec Form (Bắt buộc):** `CMD ["node", "dist/main.js"]`
+  $\rightarrow$ Tiến trình `node` trực tiếp làm `PID 1`, nhận tín hiệu tắt máy ngay lập tức để ngắt kết nối an toàn (Graceful Shutdown).
+
+---
+
+#### 🟡 NHÓM 2: DỮ LIỆU & THƯ MỤC — `WORKDIR` vs `RUN cd`, `COPY` vs `ADD`, `VOLUME`
+
+| Chỉ thị                       | Bản chất & Quy tắc thực chiến                                                                                                                                                                                    | Bẫy lỗi Production thường gặp                                                                                                                                                            |
+| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`WORKDIR`** vs **`RUN cd`** | - `WORKDIR /app`: Đổi thư mục làm việc **cho toàn bộ các lệnh tiếp theo**, tự động tạo thư mục (`mkdir -p`) nếu chưa có.<br>- `RUN cd /app`: Chỉ có tác dụng trong **tiến trình con tạm thời** của dòng lệnh đó! | ❌ _Bẫy kinh điển:_ Viết `RUN cd /app` rồi dòng sau viết `COPY . .` $\rightarrow$ Toàn bộ code bị văng vào thư mục gốc `/` thay vì `/app`! Luôn dùng `WORKDIR`.                          |
+| **`COPY`** vs **`ADD`**       | - `COPY`: Sao chép file/thư mục minh bạch từ host vào image.<br>- `ADD`: Ngoài copy còn tự động giải nén file `.tar.gz` và tải file từ URL trên mạng.                                                            | ❌ _Bẫy bảo mật:_ Dùng `ADD` tải link từ internet dễ bị tấn công MITM hoặc kéo malware. **Quy tắc: 99% trường hợp chỉ dùng `COPY`, chỉ dùng `ADD` khi muốn giải nén file `.tar` local.** |
+| **`VOLUME`**                  | Khai báo điểm gắn ổ đĩa ẩn danh (`Anonymous Volume`) bên trong Dockerfile: `VOLUME ["/app/data"]`.                                                                                                               | ⚠️ Khi khai báo `VOLUME` trong Dockerfile, mọi thay đổi trên thư mục đó ở các lệnh `RUN` tiếp theo sẽ **bị hủy bỏ**! Nên đặt `VOLUME` ở cuối Dockerfile.                                 |
+
+---
+
+#### 🔵 NHÓM 3: CẤU HÌNH & MẠNG — `ARG` vs `ENV`, `EXPOSE` vs `-p`
+
+| Chỉ thị                  | Vòng đời & Bản chất                                                                                                                                                                                                       | Bẫy lỗi Production thường gặp                                                                                                                                                                                                           |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`ARG`** vs **`ENV`**   | - `ARG`: Biến chỉ tồn tại lúc **Build Image** (biến mất khi container chạy).<br>- `ENV`: Biến môi trường sống **vĩnh viễn trong Container** (code đọc được qua `process.env`).                                            | 🚨 _Bẫy bảo mật nguy hiểm nhất:_ Dùng `ARG` hay `ENV` để truyền mật khẩu/API Key lúc build $\rightarrow$ Lệnh `docker history` sẽ **soi ra toàn bộ mật khẩu trần**! Secrets phải được mount qua Docker Secrets hoặc truyền lúc runtime. |
+| **`EXPOSE`** vs **`-p`** | - `EXPOSE <port>`: **KHÔNG HỀ tự mở cổng ra máy host!** Nó chỉ là metadata tài liệu, và làm mồi cho cờ `-P` (Publish All Ports).<br>- `-p <host>:<container>`: Mới là lệnh **thực sự bắc cầu nối mạng** từ ngoài vào app. | ❌ Nếu ghi `EXPOSE 8000` mà gõ `-p 3000:3000` $\rightarrow$ App vẫn chạy ở cổng 3000 bình thường (nếu app code nghe ở 3000), dòng `EXPOSE` bị phớt lờ.                                                                                  |
+
+---
+
+#### 🔴 NHÓM 4: BẢO MẬT & GIÁM SÁT — `USER` & `HEALTHCHECK`
+
+| Chỉ thị           | Bản chất kỹ thuật                                                                                                                  | Ứng dụng sống còn trong Production                                                                                                                                                                                                                     |
+| :---------------- | :--------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`USER`**        | Mặc định mọi container đều chạy dưới quyền **`root` (UID 0)**. Chỉ thị `USER <tên_user>` chuyển quyền thực thi sang user giới hạn. | 🛡️ _Ngăn chặn Container Breakout:_ Nếu app bị dính lỗi bảo mật (như RCE), hacker chỉ chiếm được quyền của user bình thường (`node`), không thể chiếm quyền điều khiển nhân Linux để phá máy chủ thật!                                                  |
+| **`HEALTHCHECK`** | Định kỳ thực thi một lệnh kiểm tra xem ứng dụng bên trong có thực sự phục vụ được không (ví dụ gọi vào endpoint `/health`).        | 🩺 _Chống Zombie Container:_ App có thể bị deadlock kết nối database hoặc tràn event loop, tiến trình Node vẫn sống nhưng không nhận thêm request. `HEALTHCHECK` giúp Docker/Kubernetes phát hiện trạng thái `unhealthy` để tự động restart container! |
 
 ### 1.2. Build Context là gì? (Case Study kinh điển: `demo/test` vs `demo`)
 
@@ -568,7 +618,7 @@ demo/
 
 Bấm `▶ Run` để tận mắt thấy cùng 1 file `Dockerfile` nhưng thay đổi Build Context ở cuối câu lệnh sẽ cho ra 2 kết quả trái ngược nhau:
 
-```bash
+```bash {"terminalRows":"30"}
 rm -rf docker-mastery-lab/context-demo
 mkdir -p docker-mastery-lab/context-demo/demo/test
 
@@ -604,7 +654,7 @@ rm -rf docker-mastery-lab/context-demo
 
 Chúng ta sẽ tạo file `.dockerignore` và 3 phiên bản `Dockerfile` cho ứng dụng `nestjs-app`, sau đó kiểm nghiệm tốc độ Cache khi sửa code!
 
-```bash
+```bash {"terminalRows":"30"}
 cd docker-mastery-lab/nestjs-app
 
 # 1. Tạo file .dockerignore (Ngăn gửi rác và lộ file .env vào Docker Daemon)
@@ -677,7 +727,7 @@ time docker image build -f Dockerfile.v2-layered -t nestjs-lab:v2 . 2>&1 | grep 
 
 ### 1.1. Sơ đồ Vòng đời (Lifecycle) của một Container
 
-```md
+```md {"terminalRows":"30"}
                  docker create                    docker start                     docker pause
  (Image) ----------------------------> [ CREATED ] ----------> [ RUNNING ] <=========================> [ PAUSED ]
                                             |                    |     ^        docker unpause          (Đóng băng
@@ -772,7 +822,7 @@ Như đã học ở Module 02, mọi dữ liệu phát sinh khi container chạy
 
 ### 1.2. So sánh Bản chất của `Bind Mount` và `Volume` (Sơ đồ ánh xạ ổ cứng)
 
-```ini
+```ini {"terminalRows":"30"}
 ====================================================================================
 1. BIND MOUNT (Chiều thuận: Bạn tự chọn 1 thư mục cụ thể trên máy Host gắn vào Container)
 ====================================================================================
@@ -848,7 +898,7 @@ rm -rf "${HOST_DIR}"
 
 ### Bước 2: Thực hành Named Volume, `--volumes-from` và Backup Volume ra file `.tar.gz`
 
-```bash
+```bash {"terminalRows":"40"}
 docker container rm -f vol-leader vol-follower 2>/dev/null || true
 docker volume rm -f my-persistent-data 2>/dev/null || true
 mkdir -p docker-mastery-lab/backups
@@ -899,9 +949,11 @@ docker container run --rm \
 
 ## 1. Lý thuyết Chuyên sâu
 
-### 1.1. Bốn loại Network Driver trong Docker
+### 1.1. Bốn loại Network Driver trong Docker: Bản chất & Ẩn dụ Đời thường
 
-```ini
+Hãy tưởng tượng bạn có 2 container: **`web` (NestJS backend)** và **`db` (PostgreSQL database)**. Làm sao để `web` có thể gửi dữ liệu sang `db` để lưu trữ? Docker cung cấp 4 chế độ mạng với các đặc tính hoàn toàn khác nhau:
+
+```ini {"terminalRows":"40"}
 +---------------------------------------------------------------------------------------------------+
 |                                        MÁY HOST CỦA BẠN                                           |
 |                                                                                                   |
@@ -921,23 +973,162 @@ docker container run --rm \
 +---------------------------------------------------------------------------------------------------+
 ```
 
-### 1.2. Tại sao tuyệt đối không nên dùng IP tĩnh giữa các Container mà phải dùng Custom Network DNS?
+---
 
-- Mỗi lần một container (như Database) khởi động lại, địa chỉ IP nội bộ của nó (`172.17.0.x`) **có thể bị thay đổi**! Nếu bạn điền cứng IP vào code NestJS, mỗi lần restart container là sập hệ thống.
-- Trên mạng **`bridge` mặc định**, Docker không bật DNS tự động (muốn gọi theo tên phải dùng cờ `--link` đã cũ kỹ và bị khuyến cáo ngừng dùng).
-- Khi bạn tự tạo một **Custom Network** (`docker network create my-net`), Docker nhúng sẵn một máy chủ **DNS nội bộ** vào mạng đó. Container `api` chỉ cần gọi `DATABASE_HOST=db` là Docker tự động dịch chữ `db` ra đúng địa chỉ IP hiện tại của container `db`!
+#### 1. Mạng Mặc định (Default Bridge) — _"Hội trường đông người nhưng không có danh bạ"_
 
-### 1.3. Hai kỹ thuật Kiến trúc Mạngระดับ Master (Từ Tài liệu 1 & 2)
+- **Cách hoạt động:** Khi bạn gõ `docker run` mà không truyền cờ `--network`, container tự động rơi vào mạng này.
+- **Đặc điểm:** Mỗi container được cấp 1 địa chỉ IP nội bộ ngẫu nhiên (ví dụ `172.17.0.2`, `172.17.0.3`). Các container có thể ping nhau qua IP.
+- ❌ **Nhược điểm chết người (Không có DNS):** Các container **KHÔNG THỂ GỌI NHAU BẰNG TÊN**.
+  - Nếu trong code NestJS bạn cấu hình `DATABASE_HOST=db-1` $\rightarrow$ **Báo lỗi sập ngay!** Docker không biết `db-1` là ai.
+  - Bạn buộc phải điền IP cứng `172.17.0.3`. Nhưng ngày mai container DB restart, Docker cấp IP mới `172.17.0.5` $\rightarrow$ Toàn bộ hệ thống Backend mất kết nối DB!
+  - 👉 **Quy tắc:** Trong môi trường dự án thực tế, **KHÔNG AI DÙNG mạng Default Bridge** này.
 
-1. **Một Container tham gia 2 mạng cùng lúc (Multi-Network Security Isolation):**
-   - Bạn tạo 2 mạng: `frontend-net` và `backend-net`.
-   - Cho `web` (Nginx) nằm ở `frontend-net`.
-   - Cho `db` (Postgres) nằm ở `backend-net`.
-   - Cho `api` (NestJS) nằm ở **CẢ 2 MẠNG** (dùng lệnh `docker network connect`).
-   - **Kết quả bảo mật tuyệt đối:** `web` nói chuyện được với `api`, `api` nói chuyện được với `db`, nhưng nếu hacker chiếm được `web` thì **không tài nào ping hay chọc trực tiếp vào `db` được** vì 2 mạng tách rời nhau!
+---
 
-2. **Network Alias (`--network-alias`) — Cân bằng tải (Load Balancing) tự nhiên:**
-   - Nếu bạn chạy 2 hoặc 3 container cùng thực hiện một nhiệm vụ (ví dụ 2 bản sao của `search-service`) trong cùng một Custom Network và đặt chung cờ `--network-alias search`, khi container khác gọi tới địa chỉ `http://search`, DNS của Docker sẽ **luân phiên phân phối ngẫu nhiên (Round-Robin)** vào từng container bên dưới!
+#### 2. Mạng Tự tạo (Custom Bridge) — _"Phòng họp có Thư ký danh bạ"_ ⭐ (BẮT BUỘC DÙNG KHI ĐI LÀM)
+
+- **Cách tạo:** Bạn tự tạo mạng riêng bằng lệnh `docker network create my-net` và chạy container với `--network my-net`.
+- **Điểm kỳ diệu:** Docker tự động kích hoạt một "anh thư ký" tên là **Embedded DNS Server** (IP nội bộ `127.0.0.11`).
+- **Lợi ích tuyệt đối:**
+  - Các container **gọi nhau bằng TÊN thoải mái**!
+  - Trong code NestJS, bạn chỉ cần điền `DATABASE_HOST=db-1`.
+  - Container `web` hỏi anh thư ký DNS: _"db-1 đang ở đâu?"_ $\rightarrow$ DNS lập tức trả về IP chính xác của container đó.
+  - Container có restart hay bị đổi IP bao nhiêu lần thì gọi bằng tên vẫn trúng đích 100%!
+  - 👉 **Lưu ý:** Đây chính là mạng mà **Docker Compose** tự động tạo ra cho bạn khi chạy nhiều dịch vụ cùng lúc.
+
+---
+
+#### 3. Mạng Host (`--network host`) — _"Ngồi chung bàn làm việc với chủ nhà"_
+
+- **Cách hoạt động:** Container **bỏ hết tường lửa bảo vệ, hòa làm một với card mạng của máy thật**.
+- **Đặc điểm:**
+  - Nếu app NestJS nghe cổng 3000, nó chiếm luôn cổng 3000 trên máy thật mà **không cần dùng cờ `-p 3000:3000`**.
+  - **Ưu điểm:** Tốc độ truyền mạng cực nhanh (không phải đi qua bộ chuyển đổi địa chỉ NAT của Docker).
+  - **Nhược điểm:** Mất tính cô lập bảo mật, dễ xung đột cổng (nếu 2 container cùng chạy cổng 3000 thì container thứ 2 sẽ bị lỗi văng ra ngay).
+
+---
+
+#### 4. Mạng None (`--network none`) — _"Căn phòng cách ly tuyệt đối"_
+
+- **Đặc điểm:** Container bị cắt đứt hoàn toàn mọi kết nối: không có Internet, không thấy máy host, các container khác không thể chạm tới nó.
+- **Dùng khi nào?** Dùng cho các tác vụ **siêu bảo mật**: Ví dụ chạy một chương trình kiểm tra mã độc, xử lý băm mật khẩu, mã hóa dữ liệu nhạy cảm hoặc chạy batch jobs offline mà công ty muốn đảm bảo 100% không một hacker nào có thể rò rỉ dữ liệu đó ra Internet!
+
+---
+
+### 1.2. Bảng so sánh tổng hợp 4 loại Network Drivers
+
+| Loại Mạng          | Tự động phân giải tên (DNS)?            | Cần dùng `-p` để mở cổng?               | Tốc độ mạng | Trường hợp sử dụng thực tế                               |
+| :----------------- | :-------------------------------------- | :-------------------------------------- | :---------- | :------------------------------------------------------- |
+| **Default Bridge** | ❌ **Không** (chỉ gọi bằng IP)          | ✅ Có                                   | Vừa phải    | Thử nghiệm nhanh 1 container đơn lẻ.                     |
+| **Custom Bridge**  | ✅ **Có 100%** (gọi bằng tên container) | ✅ Có                                   | Vừa phải    | **95% các dự án Web, Microservices, Compose.**           |
+| **Host**           | ❌ Không (dùng DNS của máy host)        | ❌ **Không cần** (chiếm cổng trực tiếp) | Cực nhanh   | Ứng dụng xử lý luồng video, game server cần độ trễ thấp. |
+| **None**           | ❌ Không                                | ❌ Không thể                            | 0           | Chạy thuật toán mã hóa, xử lý offline bảo mật cao.       |
+
+### 1.3. Hai kỹ thuật Kiến trúc Mạng Cấp độ Master (Multi-Network & Load Balancing)
+
+Khi thiết kế hệ thống Microservices chạy Production, các kỹ sư DevOps thường áp dụng 2 "tuyệt kỹ" mạng nâng cao sau:
+
+---
+
+#### 🛡️ Kỹ thuật 1: Một Container tham gia 2 mạng cùng lúc (Multi-Network Security Isolation)
+
+##### 1. Nguy cơ tiềm ẩn nếu để chung 1 mạng (Cách làm ngây thơ):
+
+Nhiều người mới học thường ném tất cả container vào chung một mạng:
+
+```sh
+INTERNET ---> [ web (Nginx) ] ---chung mạng---> [ api (NestJS) ] ---chung mạng---> [ db (PostgreSQL) ]
+```
+
+- **Kịch bản hacker tấn công:** Cổng Nginx mở toang ra Internet. Một ngày nọ, hacker khai thác được một lỗ hổng trong Nginx và chiếm quyền điều khiển container `web`.
+- Vì `web` và `db` nằm chung một mạng, hacker chỉ cần đứng từ `web` gõ lệnh dò quét mạng nội bộ $\rightarrow$ **Chọc thẳng vào Database cướp toàn bộ thông tin tài khoản của khách hàng!**
+
+##### 2. Giải pháp "Cắm 2 dây mạng" (Mô hình DMZ 3 lớp chuẩn Doanh nghiệp):
+
+Bạn tạo ra **2 mạng riêng biệt**: `frontend-net` (mạng ngoài) và `backend-net` (mạng nội bộ).
+
+```ini
+        INTERNET
+           │
+           ▼
+     [ web (Nginx) ]       <--- Chỉ cắm vào 'frontend-net' (Cổng 80/443 mở ra ngoài)
+           │
+           ▼ (frontend-net)
+    ┌───────────────────────────────────────────────┐
+    │              [ api (NestJS) ]                 │  <--- BẬT CHẾ ĐỘ "CẦU NỐI":
+    │    (Có 2 Card mạng: eth0 và eth1)             │       Cắm cả 2 mạng cùng lúc!
+    └───────────────────────────────────────────────┘
+           │ (backend-net)
+           ▼
+    [ db (PostgreSQL) ]    <--- Chỉ cắm vào 'backend-net' (KHÔNG mở cổng ra ngoài)
+```
+
+- **Lệnh thực hiện:**
+
+```bash
+docker network create frontend-net
+docker network create backend-net
+
+# Khởi chạy web trên frontend-net, db trên backend-net
+docker run -d --name web --network frontend-net nginx
+docker run -d --name db --network backend-net postgres:16-alpine
+
+# Cho NestJS cắm dây mạng vào CẢ 2 BÊN:
+docker run -d --name api --network frontend-net my-nestjs-app
+docker network connect backend-net api
+```
+
+- **Kết quả bảo mật tuyệt đối:**
+  - `web` gửi request sang `api` bình thường.
+  - `api` truy vấn dữ liệu từ `db` bình thường.
+  - **NHƯNG:** `web` và `db` hoàn toàn không có đường dây mạng nào nối với nhau! Dù hacker có chiếm được `web` thì gõ `ping db` cũng vô vọng vì ở `frontend-net` không hề biết sự tồn tại của `db` ở mạng trong!
+
+---
+
+#### ⚖️ Kỹ thuật 2: Network Alias (`--network-alias`) — Cân bằng tải tự nhiên (Round-Robin DNS)
+
+##### 1. Bài toán giờ cao điểm:
+
+App NestJS của bạn có 10.000 người vào cùng lúc, 1 container CPU quá tải 100%. Bạn muốn bật 3 container NestJS chạy song song để cùng gánh tải:
+
+- `api-1`
+- `api-2`
+- `api-3`
+
+Nhưng Nginx làm sao biết gửi request vào container nào mà không phải sửa đi sửa lại file config Nginx mỗi khi tăng giảm số lượng container?
+
+##### 2. Giải pháp bằng `Network Alias` (Biệt danh chung):
+
+Khi khởi động 3 container, bạn đặt cho chúng **cùng chung một "biệt danh" (alias)** là `api-service`:
+
+```bash
+docker run -d --name api-1 --network my-net --network-alias api-service my-nestjs-app
+docker run -d --name api-2 --network my-net --network-alias api-service my-nestjs-app
+docker run -d --name api-3 --network my-net --network-alias api-service my-nestjs-app
+```
+
+```ini
+                        Khách gọi vào: http://api-service
+                                      │
+                        ┌─────────────┴─────────────┐
+                        │ Docker Embedded DNS Server│
+                        │    (127.0.0.11)           │
+                        └─────────────┬─────────────┘
+                                      │ (Chia bài luân phiên Round-Robin)
+          ┌───────────────────────────┼───────────────────────────┐
+          ▼                           ▼                           ▼
+    [ api-1 (172.18.0.2) ]      [ api-2 (172.18.0.3) ]      [ api-3 (172.18.0.4) ]
+       (Nhận Request 1, 4...)      (Nhận Request 2, 5...)      (Nhận Request 3, 6...)
+```
+
+- **Cơ chế hoạt động:** Anh thư ký **DNS nội bộ của Docker** sẽ tự động làm nhiệm vụ **"Chia bài" (Round-Robin)**:
+  - Lần gọi thứ 1 vào `http://api-service` $\rightarrow$ DNS chuyển sang `api-1`.
+  - Lần gọi thứ 2 vào `http://api-service` $\rightarrow$ DNS chuyển sang `api-2`.
+  - Lần gọi thứ 3 vào `http://api-service` $\rightarrow$ DNS chuyển sang `api-3`.
+  - Lần gọi thứ 4 $\rightarrow$ Quay vòng lại `api-1`.
+
+- 👉 **Lợi ích:** Bạn vừa xây dựng xong một cụm **Cân bằng tải (Load Balancer)** tự động cực kỳ thông minh ngay từ tầng DNS nội bộ của Docker mà không cần phải cài thêm bất kỳ tool nào!
 
 ---
 

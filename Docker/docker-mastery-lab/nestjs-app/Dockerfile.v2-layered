@@ -1,0 +1,9 @@
+FROM node:20-alpine
+WORKDIR /app
+# ✅ ĐÚNG: Chỉ copy package.json trước -> Chừng nào chưa thêm thư viện mới thì bước npm install luôn được CACHED!
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["node", "dist/main.js"]
