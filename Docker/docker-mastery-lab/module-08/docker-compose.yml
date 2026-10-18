@@ -1,0 +1,12 @@
+services:
+  api:
+    image: nestjs-lab:v2
+    ports:
+      - "3000:3000"
+
+  # Công cụ quản lý DB qua giao diện Web - Chỉ bật khi gọi profile 'tools'
+  adminer:
+    image: adminer:latest
+    profiles: ["tools"]
+    ports:
+      - "8081:8080"
