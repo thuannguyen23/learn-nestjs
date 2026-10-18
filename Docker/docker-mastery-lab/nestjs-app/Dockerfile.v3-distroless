@@ -1,0 +1,36 @@
+# =========================================================================
+# BUỒNG 1: BIÊN DỊCH TYPESCRIPT (Dùng node:20-alpine đầy đủ công cụ)
+# =========================================================================
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install          # Cài đầy đủ TypeScript, @types/... để biên dịch
+COPY . .
+RUN npm run build        # Biên dịch TypeScript ra thư mục /app/dist
+
+# =========================================================================
+# BUỒNG 2: CHỈ CÀI THƯ VIỆN PRODUCTION (Vứt bỏ TypeScript và Dev Tools)
+# =========================================================================
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev # Chỉ giữ lại thư viện chạy thật, tối ưu dung lượng
+
+# =========================================================================
+# BUỒNG 3: CHẠY THẬT VỚI GOOGLE DISTROLESS (Chỉ chứa Node runtime tối giản)
+# =========================================================================
+FROM gcr.io/distroless/nodejs20-debian12:nonroot AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# 🌟 BƯỚC BƯNG THÀNH PHẨM TỪ 2 BUỒNG TRƯỚC SANG:
+# Lấy thư mục node_modules từ Buồng 2
+COPY --from=deps /app/node_modules ./node_modules
+
+# Lấy thư mục dist/ từ Buồng 1
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 3000
+
+# Chạy trực tiếp file JS bằng Node nhị phân (Exec Form), không cần mượn vỏ bọc Shell!
+CMD ["dist/main.js"]

@@ -27,21 +27,21 @@ Nhiều người mới học sợ chạy lệnh tạo file, cài cắm thư vi�
 
 ## 🗺️ BẢN ĐỒ LỘ TRÌNH 12 MODULES (BEGINNER → MASTER)
 
-| Module        | Tên Module                    | Trọng tâm cốt lõi & Case Study thực tế                                                                               | Môi trường   |
-| :------------ | :---------------------------- | :------------------------------------------------------------------------------------------------------------------- | :----------- |
-| **Module 00** | **Lab Setup & Subject App**   | Tự động khởi tạo dự án NestJS mẫu có sẵn các API test lỗi, RAM, DB, Redis                                            | Máy cá nhân  |
-| **Module 01** | **Hello Docker & Kiến trúc**  | Bài toán "Chạy được trên máy tôi", Container vs VM, kiến trúc Client-Host-Registry                                   | Máy cá nhân  |
-| **Module 02** | **Giải phẫu Docker Images**   | UnionFS Layers, Writable Layer, `docker diff`, `commit`, đóng gói `.tar` (`save`/`load`)                             | Máy cá nhân  |
-| **Module 03** | **Dockerfile Mastery**        | Layer Caching, bẫy Build Context (`demo/test` vs `demo`), `.dockerignore`, tiến hóa `v1` → `v3`          | Máy cá nhân  |
-| **Module 04** | **Containers Deep Dive**      | Vòng đời, `SIGTERM` vs `SIGKILL`, `exec`/`inspect`, ép tràn RAM xem **OOM Kill (Exit 137)**                          | Máy cá nhân  |
-| **Module 05** | **Volumes & Bind Mounts**     | Persistent Data, bẫy `:ro` vs `:rw`, Anonymous Volume của MySQL, Utility Containers                                  | Máy cá nhân  |
-| **Module 06** | **Docker Networking**         | IPTables/NAT, Default Bridge (`--link`) vs Custom Bridge (DNS), Multi-Network, Network Alias                         | Máy cá nhân  |
-| **Module 07** | **Docker Compose Cơ bản**     | Tiến hóa `v1` → `v3` (NestJS + Postgres + Redis + Adminer), bẫy `depends_on` & `healthcheck`             | Máy cá nhân  |
-| **Module 08** | **Docker Compose Nâng cao**   | Cơ chế Auto-merge `override.yml`, tách `prod.yml`, `profiles` và `Makefile` chuẩn công ty                            | Máy cá nhân  |
-| **Module 09** | **Multi-Stage Builds**        | Tận dụng output stage trước làm input stage sau: Ép cân Image từ **~1.1GB xuống ~90MB**                              | Máy cá nhân  |
-| **Module 10** | **Development vs Production** | Hot-reload + Debug (`9229`) cho Dev vs Non-root + Healthcheck + Graceful Shutdown cho Prod                           | Máy cá nhân  |
-| **Module 11** | **Security & Debugging**      | Chống leo thang đặc quyền (`--read-only`, `cap-drop`), quét lỗ hổng, bắt bệnh Crash-Loop                             | Máy cá nhân  |
-| **Module 12** | **CI/CD trên VPS & Beyond**   | GitHub Actions tự động Build → Push Registry → SSH Deploy lên **VPS thật**, Monitoring & K8s | **VPS Thật** |
+| Module        | Tên Module                    | Trọng tâm cốt lõi & Case Study thực tế                                                          | Môi trường   |
+| :------------ | :---------------------------- | :---------------------------------------------------------------------------------------------- | :----------- |
+| **Module 00** | **Lab Setup & Subject App**   | Tự động khởi tạo dự án NestJS mẫu có sẵn các API test lỗi, RAM, DB, Redis                       | Máy cá nhân  |
+| **Module 01** | **Hello Docker & Kiến trúc**  | Bài toán "Chạy được trên máy tôi", Container vs VM, kiến trúc Client-Host-Registry              | Máy cá nhân  |
+| **Module 02** | **Giải phẫu Docker Images**   | UnionFS Layers, Writable Layer, `docker diff`, `commit`, đóng gói `.tar` (`save`/`load`)        | Máy cá nhân  |
+| **Module 03** | **Dockerfile Mastery**        | Layer Caching, bẫy Build Context (`demo/test` vs `demo`), `.dockerignore`, tiến hóa `v1` → `v3` | Máy cá nhân  |
+| **Module 04** | **Containers Deep Dive**      | Vòng đời, `SIGTERM` vs `SIGKILL`, `exec`/`inspect`, ép tràn RAM xem **OOM Kill (Exit 137)**     | Máy cá nhân  |
+| **Module 05** | **Volumes & Bind Mounts**     | Persistent Data, bẫy `:ro` vs `:rw`, Anonymous Volume của MySQL, Utility Containers             | Máy cá nhân  |
+| **Module 06** | **Docker Networking**         | IPTables/NAT, Default Bridge (`--link`) vs Custom Bridge (DNS), Multi-Network, Network Alias    | Máy cá nhân  |
+| **Module 07** | **Docker Compose Cơ bản**     | Tiến hóa `v1` → `v3` (NestJS + Postgres + Redis + Adminer), bẫy `depends_on` & `healthcheck`    | Máy cá nhân  |
+| **Module 08** | **Docker Compose Nâng cao**   | Cơ chế Auto-merge `override.yml`, tách `prod.yml`, `profiles` và `Makefile` chuẩn công ty       | Máy cá nhân  |
+| **Module 09** | **Multi-Stage Builds**        | Tận dụng output stage trước làm input stage sau: Ép cân Image từ **~1.1GB xuống ~90MB**         | Máy cá nhân  |
+| **Module 10** | **Development vs Production** | Hot-reload + Debug (`9229`) cho Dev vs Non-root + Healthcheck + Graceful Shutdown cho Prod      | Máy cá nhân  |
+| **Module 11** | **Security & Debugging**      | Chống leo thang đặc quyền (`--read-only`, `cap-drop`), quét lỗ hổng, bắt bệnh Crash-Loop        | Máy cá nhân  |
+| **Module 12** | **CI/CD trên VPS & Beyond**   | GitHub Actions tự động Build → Push Registry → SSH Deploy lên **VPS thật**, Monitoring & K8s    | **VPS Thật** |
 
 ---
 
@@ -534,11 +534,11 @@ Trong môi trường Production, việc dùng sai một chỉ thị Dockerfile c
 
 #### 🟢 NHÓM 1: NHÓM VẬN HÀNH (EXECUTION) — `RUN` vs `CMD` vs `ENTRYPOINT`
 
-| Chỉ thị          | Thời điểm chạy                  | Mục đích                                                               | Bị ghi đè bởi `docker run`?                            |
-| :--------------- | :------------------------------ | :--------------------------------------------------------------------- | :----------------------------------------------------- |
+| Chỉ thị          | Thời điểm chạy                  | Mục đích                                                   | Bị ghi đè bởi `docker run`?                            |
+| :--------------- | :------------------------------ | :--------------------------------------------------------- | :----------------------------------------------------- |
 | **`RUN`**        | **Build time** (`docker build`) | Cài package, compile TypeScript → Tạo Layer mới vĩnh viễn. | ❌ Không thể                                           |
-| **`CMD`**        | **Runtime** (`docker run`)      | Khởi chạy chương trình chính mặc định của container.                   | ✅ **Bị ghi đè hoàn toàn** nếu truyền lệnh mới         |
-| **`ENTRYPOINT`** | **Runtime** (`docker run`)      | Khóa chặt chương trình chạy chính của container.                       | 🔒 Không bị ghi đè, tham số truyền vào biến thành đuôi |
+| **`CMD`**        | **Runtime** (`docker run`)      | Khởi chạy chương trình chính mặc định của container.       | ✅ **Bị ghi đè hoàn toàn** nếu truyền lệnh mới         |
+| **`ENTRYPOINT`** | **Runtime** (`docker run`)      | Khóa chặt chương trình chạy chính của container.           | 🔒 Không bị ghi đè, tham số truyền vào biến thành đuôi |
 
 ##### 🎯 Ma trận phối hợp Vàng: `ENTRYPOINT` + `CMD` (Best Practice Production)
 
@@ -568,7 +568,7 @@ CMD ["dist/main.js"]
 
 | Chỉ thị                       | Bản chất & Quy tắc thực chiến                                                                                                                                                                                    | Bẫy lỗi Production thường gặp                                                                                                                                                            |
 | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`WORKDIR`** vs **`RUN cd`** | - `WORKDIR /app`: Đổi thư mục làm việc **cho toàn bộ các lệnh tiếp theo**, tự động tạo thư mục (`mkdir -p`) nếu chưa có.<br>- `RUN cd /app`: Chỉ có tác dụng trong **tiến trình con tạm thời** của dòng lệnh đó! | ❌ _Bẫy kinh điển:_ Viết `RUN cd /app` rồi dòng sau viết `COPY . .` → Toàn bộ code bị văng vào thư mục gốc `/` thay vì `/app`! Luôn dùng `WORKDIR`.                          |
+| **`WORKDIR`** vs **`RUN cd`** | - `WORKDIR /app`: Đổi thư mục làm việc **cho toàn bộ các lệnh tiếp theo**, tự động tạo thư mục (`mkdir -p`) nếu chưa có.<br>- `RUN cd /app`: Chỉ có tác dụng trong **tiến trình con tạm thời** của dòng lệnh đó! | ❌ _Bẫy kinh điển:_ Viết `RUN cd /app` rồi dòng sau viết `COPY . .` → Toàn bộ code bị văng vào thư mục gốc `/` thay vì `/app`! Luôn dùng `WORKDIR`.                                      |
 | **`COPY`** vs **`ADD`**       | - `COPY`: Sao chép file/thư mục minh bạch từ host vào image.<br>- `ADD`: Ngoài copy còn tự động giải nén file `.tar.gz` và tải file từ URL trên mạng.                                                            | ❌ _Bẫy bảo mật:_ Dùng `ADD` tải link từ internet dễ bị tấn công MITM hoặc kéo malware. **Quy tắc: 99% trường hợp chỉ dùng `COPY`, chỉ dùng `ADD` khi muốn giải nén file `.tar` local.** |
 | **`VOLUME`**                  | Khai báo điểm gắn ổ đĩa ẩn danh (`Anonymous Volume`) bên trong Dockerfile: `VOLUME ["/app/data"]`.                                                                                                               | ⚠️ Khi khai báo `VOLUME` trong Dockerfile, mọi thay đổi trên thư mục đó ở các lệnh `RUN` tiếp theo sẽ **bị hủy bỏ**! Nên đặt `VOLUME` ở cuối Dockerfile.                                 |
 
@@ -576,8 +576,8 @@ CMD ["dist/main.js"]
 
 #### 🔵 NHÓM 3: CẤU HÌNH & MẠNG — `ARG` vs `ENV`, `EXPOSE` vs `-p`
 
-| Chỉ thị                  | Vòng đời & Bản chất                                                                                                                                                                                                       | Bẫy lỗi Production thường gặp                                                                                                                                                                                                           |
-| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chỉ thị                  | Vòng đời & Bản chất                                                                                                                                                                                                       | Bẫy lỗi Production thường gặp                                                                                                                                                                                               |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`ARG`** vs **`ENV`**   | - `ARG`: Biến chỉ tồn tại lúc **Build Image** (biến mất khi container chạy).<br>- `ENV`: Biến môi trường sống **vĩnh viễn trong Container** (code đọc được qua `process.env`).                                            | 🚨 _Bẫy bảo mật nguy hiểm nhất:_ Dùng `ARG` hay `ENV` để truyền mật khẩu/API Key lúc build → Lệnh `docker history` sẽ **soi ra toàn bộ mật khẩu trần**! Secrets phải được mount qua Docker Secrets hoặc truyền lúc runtime. |
 | **`EXPOSE`** vs **`-p`** | - `EXPOSE <port>`: **KHÔNG HỀ tự mở cổng ra máy host!** Nó chỉ là metadata tài liệu, và làm mồi cho cờ `-P` (Publish All Ports).<br>- `-p <host>:<container>`: Mới là lệnh **thực sự bắc cầu nối mạng** từ ngoài vào app. | ❌ Nếu ghi `EXPOSE 8000` mà gõ `-p 3000:3000` → App vẫn chạy ở cổng 3000 bình thường (nếu app code nghe ở 3000), dòng `EXPOSE` bị phớt lờ.                                                                                  |
 
@@ -1355,19 +1355,22 @@ docker network rm frontend-net backend-net >/dev/null
 ### 1.1. Docker Compose là gì? Ẩn dụ "Nhạc trưởng dàn nhạc giao hưởng"
 
 Khi bạn mới học Docker ở các Module trước, bạn chạy từng container đơn lẻ bằng lệnh `docker run`:
-* Chạy 1 container NestJS.
-* Chạy 1 container PostgreSQL.
-* Chạy 1 container Redis.
+
+- Chạy 1 container NestJS.
+- Chạy 1 container PostgreSQL.
+- Chạy 1 container Redis.
 
 Điều này giống như một sân khấu có 3 nhạc công (trống, kèn, đàn) nhưng **không có nhạc trưởng**:
+
 1. Bạn phải tự chạy đến từng nhạc công nhắc họ bắt đầu chơi.
 2. Bạn phải tự tay kéo dây điện nối từng người với nhau (`docker network create`, `docker network connect`).
 3. Bạn phải tự phân chia tủ đựng nhạc cụ cho từng người (`docker volume create`).
 4. Nếu có 10 dịch vụ (Microservices), bạn sẽ phải nhớ và gõ 10 câu lệnh `docker run` dài cả trang giấy với hàng chục biến môi trường `-e`, `-p`, `-v`. Chỉ cần gõ sai 1 dấu cách là toàn bộ hệ thống sập!
 
 👉 **Docker Compose chính là "Vị Nhạc Trưởng tài ba":**
-* File `docker-compose.yml` chính là **bản tổng phổ giao hưởng**. Trong file này, bạn ghi rõ: Cần bao nhiêu dịch vụ, dùng image nào, nối mạng ra sao, dùng ổ cứng nào.
-* Bạn chỉ cần vung đũa một nhịp: **`docker compose up -d`** → Toàn bộ hệ thống gồm API, Database, Redis, Nginx sẽ tự động được khởi tạo, tự nối mạng với nhau và đồng loạt cất tiếng!
+
+- File `docker-compose.yml` chính là **bản tổng phổ giao hưởng**. Trong file này, bạn ghi rõ: Cần bao nhiêu dịch vụ, dùng image nào, nối mạng ra sao, dùng ổ cứng nào.
+- Bạn chỉ cần vung đũa một nhịp: **`docker compose up -d`** → Toàn bộ hệ thống gồm API, Database, Redis, Nginx sẽ tự động được khởi tạo, tự nối mạng với nhau và đồng loạt cất tiếng!
 
 ---
 
@@ -1376,7 +1379,7 @@ Khi bạn mới học Docker ở các Module trước, bạn chạy từng conta
 Một file Docker Compose chuẩn luôn được tổ chức thành 4 khối chức năng rõ ràng:
 
 ```yaml
-version: '3.8' # (Tùy chọn ở các bản Compose mới)
+version: "3.8" # (Tùy chọn ở các bản Compose mới)
 
 # TẦNG 1: KHAI BÁO CÁC CONTAINER CẦN CHẠY
 services:
@@ -1404,6 +1407,7 @@ volumes:
 # TẦNG 3: KHAI BÁO MẠNG TOÀN CỤC (NETWORKS)
 networks:
   default: # Nếu không khai báo, Compose tự tạo mạng riêng tên là <thư_mục>_default
+
 ```
 
 > 💡 **Cơ chế DNS nội bộ thần kỳ:** Trong mạng của Docker Compose, các service tìm thấy nhau thông qua chính **Tên Service**! Trong mã nguồn NestJS, biến kết nối DB của bạn chỉ cần đặt là `postgres://postgres:password@db:5432/mydb` — Docker sẽ tự động dịch chữ `db` thành địa chỉ IP chính xác của container PostgreSQL!
@@ -1413,6 +1417,7 @@ networks:
 ### 1.3. Cái bẫy chết người của `depends_on` mặc định & Giải pháp `service_healthy`
 
 Rất nhiều lập trình viên khi mới dùng Compose thường viết:
+
 ```yaml
 services:
   api:
@@ -1421,14 +1426,17 @@ services:
       - db
   db:
     image: postgres:16-alpine
+
 ```
+
 Họ đinh ninh rằng: Có chữ `depends_on: - db` thì container `api` chắc chắn sẽ đợi `db` xong xuôi rồi mới chạy. Nhưng thực tế khi gõ `docker compose up`, **ứng dụng NestJS vẫn bị sập ngay lập tức với lỗi `ECONNREFUSED`**!
 
 #### Tại sao lại có nghịch lý này?
-* **"Khởi động" (Started) KHÁC HOÀN TOÀN với "Sẵn sàng" (Ready):**
-  * `depends_on` mặc định chỉ kiểm tra xem Docker Engine đã **bấm nút khởi động** container `db` hay chưa (mất 0.1 giây). Việc này giống như Shipper vừa dắt xe ra khỏi tiệm.
-  * Trong khi đó, tiến trình PostgreSQL bên trong container cần tới **3 đến 5 giây** để nạp file hệ thống, tạo cơ sở dữ liệu mặc định và mở cổng mạng 5432 lắng nghe.
-  * Khi container `db` vừa bấm nút start ở giây 0.1, Docker thấy điều kiện `depends_on` đã thỏa mãn nên lập tức cho `api` khởi chạy! Ứng dụng NestJS lao vào kết nối cổng 5432 trong khi PostgreSQL vẫn chưa mở cửa → **Crash sập ứng dụng!**
+
+- **"Khởi động" (Started) KHÁC HOÀN TOÀN với "Sẵn sàng" (Ready):**
+  - `depends_on` mặc định chỉ kiểm tra xem Docker Engine đã **bấm nút khởi động** container `db` hay chưa (mất 0.1 giây). Việc này giống như Shipper vừa dắt xe ra khỏi tiệm.
+  - Trong khi đó, tiến trình PostgreSQL bên trong container cần tới **3 đến 5 giây** để nạp file hệ thống, tạo cơ sở dữ liệu mặc định và mở cổng mạng 5432 lắng nghe.
+  - Khi container `db` vừa bấm nút start ở giây 0.1, Docker thấy điều kiện `depends_on` đã thỏa mãn nên lập tức cho `api` khởi chạy! Ứng dụng NestJS lao vào kết nối cổng 5432 trong khi PostgreSQL vẫn chưa mở cửa → **Crash sập ứng dụng!**
 
 ```ini
 ❌ KHI CHỈ DÙNG depends_on THÔNG THƯỜNG:
@@ -1443,6 +1451,7 @@ Họ đinh ninh rằng: Có chữ `depends_on: - db` thì container `api` chắc
 ```
 
 #### Cấu hình chuẩn mực loại bỏ 100% lỗi ECONNREFUSED:
+
 ```yaml
 services:
   db:
@@ -1458,19 +1467,20 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
 ```
 
 ---
 
 ### 1.4. Bộ 5 câu lệnh Docker Compose sống còn khi đi làm
 
-1. **`docker compose up -d`**: Khởi động toàn bộ hệ thống dưới chế độ chạy ngầm (*Detached mode*). Tự động tạo Network và Volume nếu chưa có.
-2. **`docker compose ps`**: Xem danh sách các service đang chạy kèm trạng thái sức khỏe (*healthy / starting / unhealthy*).
+1. **`docker compose up -d`**: Khởi động toàn bộ hệ thống dưới chế độ chạy ngầm (_Detached mode_). Tự động tạo Network và Volume nếu chưa có.
+2. **`docker compose ps`**: Xem danh sách các service đang chạy kèm trạng thái sức khỏe (_healthy / starting / unhealthy_).
 3. **`docker compose logs -f <service>`**: Soi logs theo thời gian thực của riêng một service (ví dụ: `docker compose logs -f api`).
 4. **`docker compose exec <service> <lệnh>`**: Chui vào container để thao tác lệnh mà không cần phải tìm Container ID dài ngoằng (ví dụ: `docker compose exec api sh` hoặc `docker compose exec db psql -U postgres`).
 5. **`docker compose down` vs `docker compose down -v` (CẢNH BÁO NGUY HIỂM):**
-   * `docker compose down`: Dừng và xóa containers + network an toàn. **Dữ liệu trong Volume vẫn giữ nguyên 100%**.
-   * `docker compose down -v`: Thêm cờ `-v` sẽ **xóa sạch toàn bộ Volumes**. Mọi dữ liệu khách hàng trong Database sẽ bốc hơi vĩnh viễn! Tuyệt đối không dùng cờ `-v` trên máy chủ Production!
+   - `docker compose down`: Dừng và xóa containers + network an toàn. **Dữ liệu trong Volume vẫn giữ nguyên 100%**.
+   - `docker compose down -v`: Thêm cờ `-v` sẽ **xóa sạch toàn bộ Volumes**. Mọi dữ liệu khách hàng trong Database sẽ bốc hơi vĩnh viễn! Tuyệt đối không dùng cờ `-v` trên máy chủ Production!
 
 ---
 
@@ -1886,7 +1896,50 @@ CMD ["node", "dist/main.js"]
 
 ---
 
-### 1.4. Bảng so sánh 3 Thế hệ Image (Từ Nặng nề đến Bất khả xâm phạm)
+### 1.4. Google Distroless — Đỉnh cao Bảo mật & Nghệ thuật Multi-Stage 3 Giai đoạn
+
+#### 1. Google Distroless là gì?
+
+Bình thường khi dùng `node:20` hoặc `node:20-alpine`, trong container vẫn là cả một hệ điều hành Linux thu nhỏ (có sẵn Terminal `sh`/`bash`, trình cài gói `apt`/`apk`, và các lệnh `curl`, `wget`, `ls`).
+
+Google đặt câu hỏi: _"Một container sinh ra để chạy API NestJS thì chỉ cần ĐÚNG TIẾN TRÌNH NODE.JS, tại sao phải nhét thêm cả hệ điều hành, shell, curl vào làm gì cho hacker lợi dụng?"_
+
+Vì vậy, Google tạo ra **Distroless** ("Distro-less" = Không có hệ điều hành):
+
+- **BÊN TRONG CHỈ CÓ:** Tiến trình `node` và vài file thư viện C tối thiểu.
+- **CẤM TIỆT HOÀN TOÀN:** Không có Terminal (`sh`, `bash`), không có trình quản lý gói (`apt`, `apk`), không có bất kỳ lệnh Linux nào (`ls`, `curl`, `wget`, `cat`).
+- **Kích thước siêu nhẹ:** Chỉ khoảng **~85 MB** (giảm hơn 92% so với bản gốc 1.1GB)!
+
+---
+
+#### 2. Tại sao `Dockerfile.v3-distroless` bắt buộc phải chia làm 3 Giai đoạn (3 Stages)?
+
+```ini {"terminalRows":"40"}
++-----------------------------------------------------------------------------------------------------+
+| GIAI ĐOẠN 1 (Stage 1: builder) - Dùng node:20-alpine                                                |
+| * Có shell, có npm, có typescript -> Chạy 'npm run build' để dịch code TS thành thư mục dist/      |
++-----------------------------------------------------------------------------------------------------+
+                                                   | (Chỉ bưng dist/)
+                                                   v
++-----------------------------------------------------------------------------------------------------+
+| GIAI ĐOẠN 2 (Stage 2: deps) - Dùng node:20-alpine                                                   |
+| * Có npm -> Chạy 'npm install --omit=dev' để tải node_modules CHỈ CHO PRODUCTION (bỏ typescript đi)|
++-----------------------------------------------------------------------------------------------------+
+                                                   | (Chỉ bưng node_modules)
+                                                   v
++-----------------------------------------------------------------------------------------------------+
+| GIAI ĐOẠN 3 (Stage 3: runner) - DÙNG GOOGLE DISTROLESS (gcr.io/distroless/nodejs20-debian12:nonroot)|
+| * Đón nhận: dist/ (từ Stage 1) và node_modules (từ Stage 2).                                        |
+| * KHÔNG CÓ SHELL, KHÔNG CÓ NPM -> Khởi chạy trực tiếp: CMD ["dist/main.js"]                         |
++-----------------------------------------------------------------------------------------------------+
+```
+
+> ❓ **Câu hỏi hay nhất:** _Tại sao không gõ `RUN npm install` thẳng trong Stage 3 cho tiện mà phải tách riêng Stage 1 & 2?_
+> 👉 **Đáp án:** Vì Distroless **KHÔNG CÓ NPM và KHÔNG CÓ SHELL (`sh`)**! Nếu bạn gõ lệnh `RUN` trong Stage 3, Docker sẽ văng lỗi ngay lập tức vì không tìm thấy chương trình nào để thực thi lệnh `RUN`. Do đó, ta bắt buộc phải mượn `node:20-alpine` ở Stage 1 & 2 để build xong xuôi, rồi mới `COPY --from=...` thành phẩm sang Distroless!
+
+---
+
+#### 3. Bảng so sánh 3 Thế hệ Image (Từ Nặng nề đến Bất khả xâm phạm)
 
 | Tiêu chí                    | Thế hệ 1: Single-Stage  | Thế hệ 2: Multi-Stage (Alpine) | Thế hệ 3: Google Distroless ⭐        |
 | :-------------------------- | :---------------------- | :----------------------------- | :------------------------------------ |
@@ -1897,12 +1950,13 @@ CMD ["node", "dist/main.js"]
 | **Trường hợp dùng**         | Thử nghiệm nháp lúc đầu | Tiêu chuẩn đa số dự án         | Ngân hàng, Tài chính, E-commerce      |
 
 > 🛡️ **Tại sao Hacker "khóc thét" trước Google Distroless?**
-> Ngay cả khi hacker khai thác được một lỗ hổng trong code của bạn để gõ lệnh tấn công từ xa (RCE - Remote Code Execution):
+> Ngay cả khi hacker khai thác được một lỗ hổng trong code web của bạn để gõ lệnh tấn công từ xa (RCE - Remote Code Execution):
 >
-> - Hacker muốn mở terminal → Máy chủ báo: `sh: not found` (Không có shell!).
-> - Hacker muốn tải tool độc hại về → Máy chủ báo: `curl: not found`, `wget: not found`.
-> - Hacker muốn cài mã độc → Máy chủ báo: `apt: not found`, `apk: not found`.
->   Hacker hoàn toàn bị "trói tay trói chân" vì bên trong container không có bất kỳ công cụ nào để thực thi!
+> - Hacker muốn mở terminal → Máy chủ báo lỗi: `sh: not found` (Không có shell!).
+> - Hacker muốn tải tool độc hại về → Máy chủ báo lỗi: `curl: not found`, `wget: not found`.
+> - Hacker muốn cài mã độc → Máy chủ báo lỗi: `apt: not found`, `apk: not found`.
+> - Hacker muốn xem danh sách file → Máy chủ báo lỗi: `ls: not found`!
+>   Hacker hoàn toàn bị "trói chặt cả hai tay lẫn hai chân" vì bên trong container không có bất kỳ công cụ nào để thực thi!
 
 ---
 
@@ -1914,7 +1968,7 @@ Hãy bấm `▶ Run` để tự động tạo và build 3 thế hệ `Dockerfile
 2. `Dockerfile.v2-multistage` (Dùng Multi-stage với `node:20-alpine`)
 3. `Dockerfile.v3-distroless` (Dùng 3 stages kết hợp `gcr.io/distroless/nodejs20-debian12`)
 
-```bash
+```bash {"terminalRows":"50"}
 cd docker-mastery-lab/nestjs-app
 
 # 1. Single-stage trên nền node:20 full (~1.1GB)
@@ -1951,29 +2005,43 @@ EXPOSE 3000
 CMD ["node", "dist/main.js"]
 EOF
 
-# 3. Multi-stage kết hợp Google Distroless (Không có cả shell sh/bash!)
+# 3. Multi-stage kết hợp Google Distroless (3 Buồng cách ly - Không có shell sh/bash!)
 cat << 'EOF' > Dockerfile.v3-distroless
-# --- STAGE 1: BUILDER ---
+# =========================================================================
+# BUỒNG 1: BIÊN DỊCH TYPESCRIPT (Dùng node:20-alpine đầy đủ công cụ)
+# =========================================================================
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm install          # Cài đầy đủ TypeScript, @types/... để biên dịch
 COPY . .
-RUN npm run build
+RUN npm run build        # Biên dịch TypeScript ra thư mục /app/dist
 
-# --- STAGE 2: PROD DEPS ---
+# =========================================================================
+# BUỒNG 2: CHỈ CÀI THƯ VIỆN PRODUCTION (Vứt bỏ TypeScript và Dev Tools)
+# =========================================================================
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm install --omit=dev # Chỉ giữ lại thư viện chạy thật, tối ưu dung lượng
 
-# --- STAGE 3: GOOGLE DISTROLESS RUNNER ---
+# =========================================================================
+# BUỒNG 3: CHẠY THẬT VỚI GOOGLE DISTROLESS (Chỉ chứa Node runtime tối giản)
+# =========================================================================
 FROM gcr.io/distroless/nodejs20-debian12:nonroot AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+
+# 🌟 BƯỚC BƯNG THÀNH PHẨM TỪ 2 BUỒNG TRƯỚC SANG:
+# Lấy thư mục node_modules từ Buồng 2
 COPY --from=deps /app/node_modules ./node_modules
+
+# Lấy thư mục dist/ từ Buồng 1
 COPY --from=builder /app/dist ./dist
+
 EXPOSE 3000
+
+# Chạy trực tiếp file JS bằng Node nhị phân (Exec Form), không cần mượn vỏ bọc Shell!
 CMD ["dist/main.js"]
 EOF
 
@@ -2019,70 +2087,80 @@ docker image rm -f nestjs-size:1-single >/dev/null
 
 ### 1.1. Bảng đối chiếu 2 thế giới: Development (Phòng thí nghiệm) vs Production (Chiến trường)
 
-| Tiêu chí | Môi trường Development (Lập trình viên) | Môi trường Production (Chạy thật trên VPS) |
-| :--- | :--- | :--- |
-| **Mục tiêu tối thượng** | Sửa code trên VS Code là thấy thay đổi ngay lập tức (**Hot-Reload**), dễ dàng gắn Debugger | Chạy nhanh, ổn định 24/7, dung lượng nhẹ, bảo mật tuyệt đối, tự phục hồi khi gặp sự cố |
-| **Cách đưa Code vào** | Dùng **Bind Mount** (`-v ./src:/app/src`) để đồng bộ trực tiếp từ máy tính cá nhân | Đóng gói cố định (`COPY --from=builder`) vào trong **Multi-Stage Image**. Cấm tuyệt đối Bind Mount code! |
-| **Thư viện (`node_modules`)** | Cần cả `devDependencies` (TypeScript, Jest, ESLint, Prettier) | Chỉ giữ lại thư viện chạy thật (`--omit=dev`). Vứt bỏ toàn bộ devDependencies |
-| **Lệnh khởi chạy (`CMD`)** | `npm run start:dev` (Chế độ Watch theo dõi file thay đổi) | `["node", "dist/main.js"]` (Chạy file JS đã biên dịch bằng Exec Form) |
-| **Quyền người dùng (`USER`)** | Có thể dùng `root` hoặc `node` để tiện debug, cài thêm tool | Bắt buộc chạy bằng **Non-root User** (`USER node`) |
-| **Kiểm tra sức khỏe** | Không bắt buộc | Bắt buộc có **`HEALTHCHECK`** định kỳ tự gõ vào `/health` |
+| Tiêu chí                      | Môi trường Development (Lập trình viên)                                                    | Môi trường Production (Chạy thật trên VPS)                                                               |
+| :---------------------------- | :----------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| **Mục tiêu tối thượng**       | Sửa code trên VS Code là thấy thay đổi ngay lập tức (**Hot-Reload**), dễ dàng gắn Debugger | Chạy nhanh, ổn định 24/7, dung lượng nhẹ, bảo mật tuyệt đối, tự phục hồi khi gặp sự cố                   |
+| **Cách đưa Code vào**         | Dùng **Bind Mount** (`-v ./src:/app/src`) để đồng bộ trực tiếp từ máy tính cá nhân         | Đóng gói cố định (`COPY --from=builder`) vào trong **Multi-Stage Image**. Cấm tuyệt đối Bind Mount code! |
+| **Thư viện (`node_modules`)** | Cần cả `devDependencies` (TypeScript, Jest, ESLint, Prettier)                              | Chỉ giữ lại thư viện chạy thật (`--omit=dev`). Vứt bỏ toàn bộ devDependencies                            |
+| **Lệnh khởi chạy (`CMD`)**    | `npm run start:dev` (Chế độ Watch theo dõi file thay đổi)                                  | `["node", "dist/main.js"]` (Chạy file JS đã biên dịch bằng Exec Form)                                    |
+| **Quyền người dùng (`USER`)** | Có thể dùng `root` hoặc `node` để tiện debug, cài thêm tool                                | Bắt buộc chạy bằng **Non-root User** (`USER node`)                                                       |
+| **Kiểm tra sức khỏe**         | Không bắt buộc                                                                             | Bắt buộc có **`HEALTHCHECK`** định kỳ tự gõ vào `/health`                                                |
 
 ---
 
 ### 1.2. Tuyệt chiêu "Anonymous Volume" cứu nguy cho `node_modules` khi Dev
 
 Khi lập trình dự án NestJS với Docker, bạn muốn sửa code ở máy thật là container nhận ngay, nên bạn dùng Bind Mount:
+
 ```yaml
 services:
   api:
     volumes:
       - ./:/app # Gắn toàn bộ thư mục hiện tại vào container
+
 ```
+
 Nhưng ngay khi gõ `docker compose up`, container lập tức báo lỗi sập: `Cannot find module '@nestjs/core'` hoặc lỗi kiến trúc nhị phân `invalid ELF header`!
 
 #### Nguyên nhân do đâu?
+
 1. Máy tính cá nhân của bạn có thể đang dùng **Windows hoặc macOS (chip Apple M-series)**, trong khi container Docker chạy **Linux**.
 2. Khi bạn gắn `- ./:/app`, thư mục `node_modules` trên máy thật của bạn sẽ **đè bẹp hoàn toàn** lên thư mục `node_modules` bên trong container Linux!
 3. Các thư viện nhị phân biên dịch sẵn (như `bcrypt`, `sharp`, `prisma`) được build cho Windows/macOS sẽ không thể nào chạy được trên nhân Linux của container!
 
 #### Giải pháp "Một dòng lệnh ma thuật":
+
 ```yaml
 services:
   api:
     volumes:
-      - ./:/app              # 1. Bind Mount code máy host vào container
-      - /app/node_modules    # 2. DÒNG MA THUẬT: Tạo Anonymous Volume riêng cho node_modules!
+      - ./:/app # 1. Bind Mount code máy host vào container
+      - /app/node_modules # 2. DÒNG MA THUẬT: Tạo Anonymous Volume riêng cho node_modules!
+
 ```
-* **Cơ chế hoạt động:** Docker có quy tắc ưu tiên đường dẫn dài và chi tiết hơn. Vì `/app/node_modules` dài và cụ thể hơn `/app`, Docker sẽ bọc riêng thư mục `node_modules` của container vào một Anonymous Volume độc lập.
-* 👉 **Kết quả:** Bạn thoải mái sửa code NestJS trên máy thật, code vẫn cập nhật tự động vào container, nhưng thư mục `node_modules` chuẩn Linux của container thì được bảo vệ nguyên vẹn 100%, không bao giờ bị máy host đè lên!
+
+- **Cơ chế hoạt động:** Docker có quy tắc ưu tiên đường dẫn dài và chi tiết hơn. Vì `/app/node_modules` dài và cụ thể hơn `/app`, Docker sẽ bọc riêng thư mục `node_modules` của container vào một Anonymous Volume độc lập.
+- 👉 **Kết quả:** Bạn thoải mái sửa code NestJS trên máy thật, code vẫn cập nhật tự động vào container, nhưng thư mục `node_modules` chuẩn Linux của container thì được bảo vệ nguyên vẹn 100%, không bao giờ bị máy host đè lên!
 
 ---
 
 ### 1.3. Hiện tượng "Chết lâm sàng" & Sứ mệnh của `HEALTHCHECK`
 
-* **Ẩn dụ "Bệnh nhân tim ngừng đập nhưng máy thở vẫn chạy":**
+- **Ẩn dụ "Bệnh nhân tim ngừng đập nhưng máy thở vẫn chạy":**
   Nhiều khi tiến trình `node` bên trong container bị treo cứng (vòng lặp vô tận, cạn kiệt bộ nhớ, hoặc mất kết nối vĩnh viễn tới Database). Docker Engine ở bên ngoài chỉ nhìn vào bảng tiến trình của hệ điều hành: Thấy mã tiến trình Node vẫn còn đó, Docker vẫn báo trạng thái màu xanh **`Up (Running)`**! Nhưng khách hàng truy cập website thì bị xoay tròn và nhận mã lỗi `504 Gateway Timeout`.
-* **`HEALTHCHECK` đóng vai trò là "Bác sĩ đo nhịp tim định kỳ":**
+- **`HEALTHCHECK` đóng vai trò là "Bác sĩ đo nhịp tim định kỳ":**
   Chỉ thị `HEALTHCHECK` yêu cầu Docker cứ mỗi vài giây tự động gõ một lệnh kiểm tra (ví dụ: `wget -qO- http://localhost:3000/health || exit 1`).
-  * Nếu endpoint `/health` trả về `200 OK` → Container được gắn nhãn **`(healthy)`**.
-  * Nếu quá 3 lần kiểm tra liên tiếp bị thất bại → Docker đổi ngay nhãn trạng thái thành **`(unhealthy)`**!
-  * Nhờ nhãn `unhealthy` này, các hệ thống cân bằng tải (Nginx, Traefik, AWS ALB) sẽ lập tức ngừng chuyển khách hàng vào container bị bệnh, tránh làm khách hàng gặp lỗi!
+  - Nếu endpoint `/health` trả về `200 OK` → Container được gắn nhãn **`(healthy)`**.
+  - Nếu quá 3 lần kiểm tra liên tiếp bị thất bại → Docker đổi ngay nhãn trạng thái thành **`(unhealthy)`**!
+  - Nhờ nhãn `unhealthy` này, các hệ thống cân bằng tải (Nginx, Traefik, AWS ALB) sẽ lập tức ngừng chuyển khách hàng vào container bị bệnh, tránh làm khách hàng gặp lỗi!
 
 ---
 
 ### 1.4. Nghệ thuật Tắt êm ái (Graceful Shutdown) vs "Bị rút phích cắm" (`SIGKILL`)
 
 Tưởng tượng bạn đang ngồi trên máy tính gõ dở một bài luận văn quan trọng:
-* **Cách thô bạo (`SIGKILL` - Rút phích cắm):** Ai đó đột ngột giật phụt dây nguồn máy tính ra khỏi ổ điện! Toàn bộ bài luận văn đang lưu dở bị hỏng, mất sạch dữ liệu.
-* **Cách văn minh (`SIGTERM` - Graceful Shutdown):** Người đó đến vỗ vai bạn bảo: *"Tôi sẽ tắt máy sau 10 giây nữa nhé, bạn lưu bài cẩn thận đi"*. Bạn kịp bấm Save, đóng file word, rồi máy mới tắt an toàn.
+
+- **Cách thô bạo (`SIGKILL` - Rút phích cắm):** Ai đó đột ngột giật phụt dây nguồn máy tính ra khỏi ổ điện! Toàn bộ bài luận văn đang lưu dở bị hỏng, mất sạch dữ liệu.
+- **Cách văn minh (`SIGTERM` - Graceful Shutdown):** Người đó đến vỗ vai bạn bảo: _"Tôi sẽ tắt máy sau 10 giây nữa nhé, bạn lưu bài cẩn thận đi"_. Bạn kịp bấm Save, đóng file word, rồi máy mới tắt an toàn.
 
 #### Trong môi trường Production thực tế:
+
 Khi bạn cập nhật phiên bản mới của ứng dụng trên VPS, Docker sẽ gửi lệnh `docker stop` tới container cũ.
+
 1. **Nếu không có Graceful Shutdown:** Container bị ngắt đột ngột. Một khách hàng đang bấm nút "Thanh toán đơn hàng 10 triệu đồng" đúng ở giây thứ 0.5 sẽ bị đứt kết nối giữa chừng, tiền bị trừ ở ngân hàng nhưng đơn hàng chưa kịp lưu vào Database!
 2. **Khi có Graceful Shutdown (NestJS kích hoạt `app.enableShutdownHooks()`):**
-   * Docker gửi tín hiệu **`SIGTERM`** (Tín hiệu xin phép dừng lịch sự).
-   * Ứng dụng NestJS đón nhận tín hiệu và lập tức:
+   - Docker gửi tín hiệu **`SIGTERM`** (Tín hiệu xin phép dừng lịch sự).
+   - Ứng dụng NestJS đón nhận tín hiệu và lập tức:
      1. Ngừng nhận thêm các lượt truy cập mới từ bên ngoài.
      2. Kiên nhẫn chờ các giao dịch thanh toán đang xử lý dở hoàn tất nốt.
      3. Đóng kết nối Database, đóng kết nối Redis an toàn, dọn dẹp file tạm.
@@ -2162,11 +2240,12 @@ và lệnh `docker stop` hoàn tất chỉ trong chưa đầy **0.5 giây** (tha
 
 ### 1.1. Giải ảo hiểu lầm về "Vỏ bọc Container" & Nguy cơ Vượt ngục (Container Breakout)
 
-Rất nhiều bạn mới học lầm tưởng rằng: *"Container là một chiếc hộp kín cách ly như máy ảo, hacker dù có chiếm được ứng dụng bên trong container thì cũng chỉ quậy phá trong cái hộp đó thôi, máy chủ VPS của mình vẫn an toàn 100%"*.
+Rất nhiều bạn mới học lầm tưởng rằng: _"Container là một chiếc hộp kín cách ly như máy ảo, hacker dù có chiếm được ứng dụng bên trong container thì cũng chỉ quậy phá trong cái hộp đó thôi, máy chủ VPS của mình vẫn an toàn 100%"_.
 
 > 💥 **Thực tế phũ phàng:** Container **KHÔNG PHẢI** là máy ảo! Container chỉ là một tiến trình bình thường chạy chung **nhân Linux (Linux Kernel)** của máy chủ VPS!
-> * Mặc định khi bạn không khai báo `USER`, ứng dụng NestJS sẽ chạy dưới quyền **`root`** (`uid=0`).
-> * Quyền `root` này đối với nhân Linux là **thật 100%**. Nếu mã nguồn của bạn có lỗ hổng bảo mật kết hợp với một lỗi trong nhân Linux, hacker có thể thực hiện kỹ thuật **Container Breakout (Vượt ngục container)**: Chúng sẽ nhảy thẳng từ bên trong container ra ngoài máy chủ VPS và trở thành chúa tể `root` trên toàn bộ hệ thống của bạn!
+>
+> - Mặc định khi bạn không khai báo `USER`, ứng dụng NestJS sẽ chạy dưới quyền **`root`** (`uid=0`).
+> - Quyền `root` này đối với nhân Linux là **thật 100%**. Nếu mã nguồn của bạn có lỗ hổng bảo mật kết hợp với một lỗi trong nhân Linux, hacker có thể thực hiện kỹ thuật **Container Breakout (Vượt ngục container)**: Chúng sẽ nhảy thẳng từ bên trong container ra ngoài máy chủ VPS và trở thành chúa tể `root` trên toàn bộ hệ thống của bạn!
 
 ---
 
@@ -2197,11 +2276,12 @@ Rất nhiều bạn mới học lầm tưởng rằng: *"Container là một chi
 1. **Lớp 1 — Áp dụng nguyên lý Quyền tối thiểu (`USER node`):**
    Trong `Dockerfile.prod`, luôn thêm chỉ thị `USER node` ở dòng cuối cùng trước `CMD`. Nếu hacker chiếm được server, chúng cũng không thể cài thêm phần mềm độc hại bằng lệnh hệ thống.
 2. **Lớp 2 — Đóng băng hệ thống file (`--read-only` kết hợp `--tmpfs /tmp`):**
-   * **Ẩn dụ "Bảo tàng tranh":** Trong bảo tàng, tranh ảnh chỉ để ngắm chứ không ai được phép vẽ bậy lên. Trong Production, code NestJS đã được build cố định vào thư mục `dist/`, không có bất kỳ lý do gì ứng dụng phải tự sửa code của chính nó!
-   * Cờ `--read-only` biến toàn bộ hệ thống file trong container thành **chỉ đọc**. Nếu hacker cố tình chui vào container và gõ lệnh tải virus `wget hack.sh`, hệ điều hành lập tức chặn đứng với thông báo lỗi: `Read-only file system`!
-   * Nếu ứng dụng cần một góc nhỏ để ghi file tạm (ví dụ: người dùng upload file CSV lên xử lý trước khi lưu)? Ta cấp riêng một vùng nhớ RAM bằng cờ: `--tmpfs /tmp:rw,noexec,nosuid,size=64m` (vừa ghi tạm được, vừa cấm thực thi file mã độc bằng `noexec`).
+   - **Ẩn dụ "Bảo tàng tranh":** Trong bảo tàng, tranh ảnh chỉ để ngắm chứ không ai được phép vẽ bậy lên. Trong Production, code NestJS đã được build cố định vào thư mục `dist/`, không có bất kỳ lý do gì ứng dụng phải tự sửa code của chính nó!
+   - Cờ `--read-only` biến toàn bộ hệ thống file trong container thành **chỉ đọc**. Nếu hacker cố tình chui vào container và gõ lệnh tải virus `wget hack.sh`, hệ điều hành lập tức chặn đứng với thông báo lỗi: `Read-only file system`!
+   - Nếu ứng dụng cần một góc nhỏ để ghi file tạm (ví dụ: người dùng upload file CSV lên xử lý trước khi lưu)? Ta cấp riêng một vùng nhớ RAM bằng cờ: `--tmpfs /tmp:rw,noexec,nosuid,size=64m` (vừa ghi tạm được, vừa cấm thực thi file mã độc bằng `noexec`).
+
 3. **Lớp 3 — Tước bỏ vũ khí nhân Linux (`--cap-drop=ALL` & `no-new-privileges`):**
-   Nhân Linux chia nhỏ quyền lực của root thành hàng chục năng lực (*Capabilities*). Cờ `--cap-drop=ALL` sẽ tước bỏ 100% mọi quyền lực này. Tiến trình chỉ còn giữ lại năng lực thuần túy là tính toán số học và phục vụ cổng mạng!
+   Nhân Linux chia nhỏ quyền lực của root thành hàng chục năng lực (_Capabilities_). Cờ `--cap-drop=ALL` sẽ tước bỏ 100% mọi quyền lực này. Tiến trình chỉ còn giữ lại năng lực thuần túy là tính toán số học và phục vụ cổng mạng!
 
 ---
 
@@ -2231,15 +2311,19 @@ Bước 4: docker diff <name>            ===> Soi xem container kịp tạo file
 1. **Bước 1 — Đọc lời trăng trối (`docker container logs <tên>`):**
    Xem 5 dòng log cuối cùng. 90% nguyên nhân container sập là do: thiếu biến môi trường cấu hình DB (`DATABASE_URL is undefined`), gõ sai cổng, hoặc code NestJS bị dính Syntax Error.
 2. **Bước 2 — Soi mã tử vong (`docker container inspect <tên>`):**
-   * Nếu thấy **`ExitCode: 137`** và **`OOMKilled: true`**: Container bị tràn RAM và bị hệ điều hành bắn tỉa tiêu diệt.
-   * Nếu thấy **`ExitCode: 127`**: Không tìm thấy file chạy (sai đường dẫn trong lệnh `CMD` hoặc quên cài Node.js).
-   * Soi kỹ mục `Config.Cmd` và `Config.Env` để xem biến môi trường truyền vào có bị thiếu dấu cách hay viết sai chính tả không.
+   - Nếu thấy **`ExitCode: 137`** và **`OOMKilled: true`**: Container bị tràn RAM và bị hệ điều hành bắn tỉa tiêu diệt.
+   - Nếu thấy **`ExitCode: 127`**: Không tìm thấy file chạy (sai đường dẫn trong lệnh `CMD` hoặc quên cài Node.js).
+   - Soi kỹ mục `Config.Cmd` và `Config.Env` để xem biến môi trường truyền vào có bị thiếu dấu cách hay viết sai chính tả không.
+
 3. **Bước 3 — Mổ khám nghiệm bằng cách ghi đè lệnh chạy (`--entrypoint sh`):**
    Đây là vũ khí tối thượng của DevOps! Bạn không thể `exec` vào container đã chết, nhưng bạn hoàn toàn có thể chạy một container **MỚI** từ chính Image đó nhưng **ghi đè lệnh khởi động thành `sh`**:
-   ```bash
-   docker run --rm -it --entrypoint sh nestjs-prod:v1
-   ```
-   Lúc này container sẽ không chạy code NestJS lỗi nữa mà mở thẳng Terminal cho bạn. Bạn có thể gõ `ls -la dist/` xem file `main.js` nằm ở đâu, hoặc tự tay gõ `node dist/main.js` để xem lỗi bắn ra trực tiếp trước mắt!
+
+```bash
+docker run --rm -it --entrypoint sh nestjs-prod:v1
+```
+
+Lúc này container sẽ không chạy code NestJS lỗi nữa mà mở thẳng Terminal cho bạn. Bạn có thể gõ `ls -la dist/` xem file `main.js` nằm ở đâu, hoặc tự tay gõ `node dist/main.js` để xem lỗi bắn ra trực tiếp trước mắt!
+
 4. **Bước 4 — Soi dấu vết thay đổi (`docker container diff <tên>`):**
    Xem danh sách các file mà container đã kịp tạo ra (`A`), sửa đổi (`C`) trước khi qua đời.
 
@@ -2248,10 +2332,12 @@ Bước 4: docker diff <name>            ===> Soi xem container kịp tạo file
 ### 1.4. Quét lỗ hổng tự động với Trivy (Bác sĩ tầm soát mã độc)
 
 Trước khi đem bất kỳ Image nào lên máy chủ Production, hãy chạy công cụ bảo mật tiêu chuẩn mã nguồn mở **Trivy**:
+
 ```bash
 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image nestjs-prod:v1
 ```
-Trivy sẽ quét toàn bộ các gói thư viện `npm` và các file hệ điều hành, lập tức cảnh báo nếu Image của bạn chứa các lỗ hổng bảo mật nghiêm trọng (*CRITICAL / HIGH CVE*) kèm theo gợi ý phiên bản an toàn cần cập nhật.
+
+Trivy sẽ quét toàn bộ các gói thư viện `npm` và các file hệ điều hành, lập tức cảnh báo nếu Image của bạn chứa các lỗ hổng bảo mật nghiêm trọng (_CRITICAL / HIGH CVE_) kèm theo gợi ý phiên bản an toàn cần cập nhật.
 
 ---
 
@@ -2329,10 +2415,11 @@ docker container rm -f broken-container >/dev/null
 ### 1.1. CI/CD là gì? Ẩn dụ "Dây chuyền đóng chai tự động"
 
 Hãy tưởng tượng bạn mở một xưởng sản xuất nước cam ép:
-* **Cách làm thủ công (Không có CI/CD):** Mỗi lần có mẻ cam mới, bạn tự tay vắt cam, tự nếm thử xem có chua không, tự rót vào chai, tự dán nhãn, rồi tự lái xe máy chở từng thùng nước cam đến các siêu thị. Nếu một ngày bạn mệt mỏi quên không kiểm tra, một chai nước cam hỏng sẽ lọt ra thị trường làm mất uy tín công ty!
-* **Dây chuyền tự động (Có CI/CD):**
-  * **CI (Continuous Integration - Tích hợp liên tục):** Ngay khi bạn đưa cam vào máng (`git push`), robot tự động phân loại, chạy kiểm thử nồng độ đường (chạy Test tự động), biên dịch code TypeScript và đóng vào các thùng hàng chuẩn hóa (**Build Docker Image**). Nếu có lỗi, còi báo động réo lên ngay lập tức và dừng dây chuyền!
-  * **CD (Continuous Deployment - Triển khai liên tục):** Sau khi thùng hàng đã đóng gói hoàn hảo và gửi vào kho trung chuyển (**Docker Hub / GitHub Packages**), hệ thống tự động phát tín hiệu cho xe tải chở đến máy chủ (**VPS**) và thay thế các chai cũ bằng chai mới mà siêu thị không phải đóng cửa ngừng bán dù chỉ 1 giây!
+
+- **Cách làm thủ công (Không có CI/CD):** Mỗi lần có mẻ cam mới, bạn tự tay vắt cam, tự nếm thử xem có chua không, tự rót vào chai, tự dán nhãn, rồi tự lái xe máy chở từng thùng nước cam đến các siêu thị. Nếu một ngày bạn mệt mỏi quên không kiểm tra, một chai nước cam hỏng sẽ lọt ra thị trường làm mất uy tín công ty!
+- **Dây chuyền tự động (Có CI/CD):**
+  - **CI (Continuous Integration - Tích hợp liên tục):** Ngay khi bạn đưa cam vào máng (`git push`), robot tự động phân loại, chạy kiểm thử nồng độ đường (chạy Test tự động), biên dịch code TypeScript và đóng vào các thùng hàng chuẩn hóa (**Build Docker Image**). Nếu có lỗi, còi báo động réo lên ngay lập tức và dừng dây chuyền!
+  - **CD (Continuous Deployment - Triển khai liên tục):** Sau khi thùng hàng đã đóng gói hoàn hảo và gửi vào kho trung chuyển (**Docker Hub / GitHub Packages**), hệ thống tự động phát tín hiệu cho xe tải chở đến máy chủ (**VPS**) và thay thế các chai cũ bằng chai mới mà siêu thị không phải đóng cửa ngừng bán dù chỉ 1 giây!
 
 ---
 
@@ -2362,32 +2449,35 @@ Hãy tưởng tượng bạn mở một xưởng sản xuất nước cam ép:
 Nhiều lập trình viên mới thuê máy chủ VPS giá rẻ (loại 4 đến 5 USD/tháng, chỉ có 1GB hoặc 2GB RAM) thường có thói quen: Cài git lên VPS, kéo source code về rồi gõ `docker compose up --build` trực tiếp trên VPS.
 
 #### Hậu quả khôn lường:
+
 1. Quá trình biên dịch TypeScript (`npm run build` / `nest build`) và cài đặt thư viện ngốn rất nhiều RAM và đẩy CPU lên 100%.
 2. Con VPS 1GB RAM ngay lập tức bị tràn bộ nhớ. Trình quản lý bộ nhớ của Linux (OOM Killer) sẽ thức giấc và **bắn chết ngay lập tức các tiến trình đang phục vụ khách hàng (Database, Nginx, API)**, thậm chí làm treo cứng cả tiến trình SSH khiến bạn không thể đăng nhập vào VPS được nữa!
 
 #### Giải pháp chuẩn Master:
-* Tận dụng **siêu máy tính miễn phí của GitHub Actions** (có sẵn 7GB RAM và nhiều CPU Cores tốc độ cao).
-* GitHub Actions sẽ gánh toàn bộ tải nặng: Chạy Test, Build Multi-Stage Image siêu nhẹ (~140MB), rồi đẩy lên **Docker Hub / ghcr.io**.
-* Máy chủ VPS của bạn chỉ làm một việc duy nhất cực kỳ nhẹ nhàng: **`docker compose pull`** (tải Image đã nấu chín về trong 3 giây) rồi khởi động lên. CPU của VPS hầu như không nhúc nhích!
+
+- Tận dụng **siêu máy tính miễn phí của GitHub Actions** (có sẵn 7GB RAM và nhiều CPU Cores tốc độ cao).
+- GitHub Actions sẽ gánh toàn bộ tải nặng: Chạy Test, Build Multi-Stage Image siêu nhẹ (~140MB), rồi đẩy lên **Docker Hub / ghcr.io**.
+- Máy chủ VPS của bạn chỉ làm một việc duy nhất cực kỳ nhẹ nhàng: **`docker compose pull`** (tải Image đã nấu chín về trong 3 giây) rồi khởi động lên. CPU của VPS hầu như không nhúc nhích!
 
 ---
 
 ### 1.4. Zero-Downtime Deployment & Bước đệm tiến lên Kubernetes (K8s)
 
 #### 1. Zero-Downtime Deployment (Thay lốp xe khi xe vẫn chạy):
-* Nếu cập nhật bằng cách: `docker compose down` rồi `docker compose up -d`, website của bạn sẽ bị "chết" khoảng 10-20 giây trong lúc container mới khởi động. Khách hàng bấm mua hàng lúc này sẽ gặp lỗi kết nối.
-* Cách xử lý chuẩn: Container mới được bật lên song song với container cũ. Khi container mới báo **`healthy`**, hệ thống mạng mới chuyển luồng khách hàng sang container mới và tắt container cũ đi một cách êm ái (Graceful Shutdown).
+
+- Nếu cập nhật bằng cách: `docker compose down` rồi `docker compose up -d`, website của bạn sẽ bị "chết" khoảng 10-20 giây trong lúc container mới khởi động. Khách hàng bấm mua hàng lúc này sẽ gặp lỗi kết nối.
+- Cách xử lý chuẩn: Container mới được bật lên song song với container cũ. Khi container mới báo **`healthy`**, hệ thống mạng mới chuyển luồng khách hàng sang container mới và tắt container cũ đi một cách êm ái (Graceful Shutdown).
 
 #### 2. Khi nào nên dùng Docker Compose và khi nào cần Kubernetes (K8s)?
 
-| Tiêu chí so sánh | Docker Compose | Kubernetes (K8s) |
+## | Tiêu chí so sánh | Docker Compose | Kubernetes (K8s) |
+
 | :--- | :--- | :--- |
 | **Quy mô hạ tầng** | **1 máy chủ duy nhất (Single Node VPS)** | **Cụm hàng chục, hàng trăm máy chủ (Cluster)** |
 | **Độ phức tạp** | Rất đơn giản, học trong 1 ngày là làm chủ | Rất phức tạp, cần đội ngũ DevOps chuyên trách |
 | **Khả năng chịu lỗi** | Nếu con VPS bị cháy nguồn/mất mạng → Toàn bộ website sập | 1 máy chủ cháy nổ → Tự động dời container sang máy khác trong 5 giây |
 | **Tự động mở rộng (Autoscale)** | Không hỗ trợ tự động scale theo tải thực tế | Tự động tăng từ 3 lên 50 container khi có Flash Sale |
 | **Khi nào nên dùng?** | Startup, dự án vừa và nhỏ, chi phí tiết kiệm (1 VPS) | Doanh nghiệp lớn, thương mại điện tử, tài chính ngân hàng |
----
 
 ## 2. Hướng dẫn Từng bước Chuẩn bị VPS Thật (Chỉ mất 5 phút)
 
