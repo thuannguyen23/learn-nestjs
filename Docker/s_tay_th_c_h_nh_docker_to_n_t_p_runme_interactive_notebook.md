@@ -2126,11 +2126,51 @@ services:
     volumes:
       - ./:/app # 1. Bind Mount code máy host vào container
       - /app/node_modules # 2. DÒNG MA THUẬT: Tạo Anonymous Volume riêng cho node_modules!
+      - /app/dist # 3. Bảo vệ thêm thư mục dist/ do container tự build
 
 ```
 
-- **Cơ chế hoạt động:** Docker có quy tắc ưu tiên đường dẫn dài và chi tiết hơn. Vì `/app/node_modules` dài và cụ thể hơn `/app`, Docker sẽ bọc riêng thư mục `node_modules` của container vào một Anonymous Volume độc lập.
-- 👉 **Kết quả:** Bạn thoải mái sửa code NestJS trên máy thật, code vẫn cập nhật tự động vào container, nhưng thư mục `node_modules` chuẩn Linux của container thì được bảo vệ nguyên vẹn 100%, không bao giờ bị máy host đè lên!
+- **Cơ chế hoạt động:** Docker có quy tắc ưu tiên đường dẫn dài và chi tiết hơn. Vì `/app/node_modules` và `/app/dist` dài và cụ thể hơn `/app`, Docker sẽ bọc riêng các thư mục này của container vào các Anonymous Volume độc lập.
+- 👉 **Kết quả:** Bạn thoải mái sửa code NestJS trên máy thật, code vẫn cập nhật tự động vào container, nhưng các thư mục nhạy cảm bên trong container thì được bảo vệ nguyên vẹn 100%, không bao giờ bị máy host đè lên!
+
+---
+
+#### 💡 Bốn câu hỏi thực chiến sống còn về Anonymous Volume & Bind Mount:
+
+##### 1. Có thể áp dụng để bảo vệ các thư mục khác như `/app/dist` không?
+
+- **Có, hoàn toàn chính xác!** Công thức tổng quát là: _"Đồng bộ cả thư mục cha, nhưng tạo ngoại lệ Anonymous Volume khoanh vùng bảo vệ cho các thư mục con do Container tự sinh ra"_.
+- Thêm `- /app/dist` sẽ ngăn không cho thư mục `dist/` cũ từ máy host đè lên thư mục `dist/` mới mà container đang tự biên dịch trong chế độ watch (`start:dev`).
+
+##### 2. Nếu máy Host nâng cấp Node từ 20 lên 22 thì Container và Bind Mount ra sao?
+
+- **Container hoàn toàn KHÔNG bị ảnh hưởng!**
+  - Máy host và Container là hai thế giới tách biệt. Ứng dụng NestJS bên trong container chạy bằng phiên bản Node khai báo trong `Dockerfile` (`FROM node:20-alpine`), chứ **không hề dùng Node của máy host**. Thậm chí máy host có gỡ sạch Node thì container vẫn chạy bình thường.
+  - Bind Mount chỉ là chiếc "ống nhòm" truyền file code text (`.ts`, `.json`), không truyền môi trường thực thi của máy host vào container.
+
+##### 3. Nếu muốn nâng cấp Node trong Container lên 22 thì xử lý Volume cũ thế nào?
+
+- Khi bạn đổi `Dockerfile` sang `FROM node:22-alpine`, cái Anonymous Volume `/app/node_modules` cũ vẫn còn lưu thư viện biên dịch của Node 20. Một số thư viện C/C++ (_Native Addons_ như `bcrypt`, `sharp`, `prisma`) có thể bị lỗi không tương thích phiên bản nhị phân (_ABI mismatch_)!
+
+- **Quy trình chuẩn 2 bước để dọn sạch Volume cũ và lên Node 22:**
+
+```bash
+# Bước 1: Xóa bỏ các Anonymous Volume cũ bằng cờ -v
+docker compose down -v
+
+# Bước 2: Build lại từ đầu với Node 22
+docker compose up -d --build
+```
+
+##### 4. Khi cài thêm thư viện mới trên máy Host (`npm install axios`) thì sao?
+
+- File `package.json` ở máy host được đồng bộ ngay vào container. Nhưng vì `node_modules` của container đang được "đóng băng" trong Volume riêng, nên **container chưa có thư viện mới**.
+
+- **Cách xử lý:** Chỉ cần ra lệnh cho container tự cài:
+
+```bash
+docker compose exec api npm install
+```
 
 ---
 
@@ -2253,7 +2293,7 @@ Rất nhiều bạn mới học lầm tưởng rằng: _"Container là một chi
 
 Để bảo vệ hệ thống trước các cuộc tấn công mạng, một Kỹ sư DevOps chuyên nghiệp luôn trang bị 3 lớp áo giáp sau:
 
-```ini
+```ini {"terminalRows":"40"}
 +-----------------------------------------------------------------------------------------+
 |                                    MÁY CHỦ VPS THẬT (UBUNTU)                            |
 |                                                                                         |
@@ -2378,7 +2418,7 @@ docker container rm -f ultra-secure-app >/dev/null
 
 Ô lệnh bên dưới sẽ tạo ra một container tên là `broken-container` bị sập ngay sau khi vừa khởi chạy. Hãy bấm `▶ Run` để dùng bộ công cụ điều tra nguyên nhân và sửa lỗi:
 
-```bash
+```bash {"terminalRows":"60"}
 docker container rm -f broken-container fixed-container 2>/dev/null || true
 
 # Cố tình chạy một container bị cấu hình sai tên file thực thi
@@ -2425,7 +2465,7 @@ Hãy tưởng tượng bạn mở một xưởng sản xuất nước cam ép:
 
 ### 1.2. Kiến trúc Luồng CI/CD Thực tế từ Máy tính lên VPS
 
-```ini
+```ini {"terminalRows":"50"}
 +--------------------+      1. git push       +---------------------------------------------------+
 |  MÁY TÍNH CỦA BẠN  | ---------------------> |              GITHUB REPOSITORY                    |
 |  (Code NestJS)     |                        |  Kích hoạt GitHub Actions (.github/workflows/...) |
@@ -2463,21 +2503,30 @@ Nhiều lập trình viên mới thuê máy chủ VPS giá rẻ (loại 4 đến
 
 ### 1.4. Zero-Downtime Deployment & Bước đệm tiến lên Kubernetes (K8s)
 
-#### 1. Zero-Downtime Deployment (Thay lốp xe khi xe vẫn chạy):
+#### 1. Zero-Downtime Deployment (Thay lốp xe khi xe vẫn đang chạy)
+* **Vấn đề cập nhật truyền thống:** Nếu bạn deploy bằng cách gõ `docker compose down` rồi mới `docker compose up -d`, website của bạn sẽ bị "chết" khoảng 10-20 giây trong lúc chờ container mới khởi động. Khách hàng đang bấm nút thanh toán đúng lúc này sẽ gặp lỗi mất kết nối!
+* **Cách xử lý chuẩn (Zero-Downtime):** Container phiên bản mới được kéo về và khởi động song song với container cũ. Chỉ khi container mới vượt qua bài kiểm tra sức khỏe và báo trạng thái **`healthy`**, hệ thống mạng mới chuyển luồng khách hàng sang container mới và tắt container cũ đi một cách êm ái (Graceful Shutdown).
 
-- Nếu cập nhật bằng cách: `docker compose down` rồi `docker compose up -d`, website của bạn sẽ bị "chết" khoảng 10-20 giây trong lúc container mới khởi động. Khách hàng bấm mua hàng lúc này sẽ gặp lỗi kết nối.
-- Cách xử lý chuẩn: Container mới được bật lên song song với container cũ. Khi container mới báo **`healthy`**, hệ thống mạng mới chuyển luồng khách hàng sang container mới và tắt container cũ đi một cách êm ái (Graceful Shutdown).
+---
 
-#### 2. Khi nào nên dùng Docker Compose và khi nào cần Kubernetes (K8s)?
+#### 2. Cột mốc Chuyển dịch: Khi nào Docker Compose là đủ và khi nào cần Kubernetes (K8s)?
 
-## | Tiêu chí so sánh | Docker Compose | Kubernetes (K8s) |
+Nhiều bạn học xong Docker thường băn khoăn: *"Dự án của em khi nào thì nên chuyển từ Docker Compose lên Kubernetes?"*
 
+Hãy tưởng tượng qua ẩn dụ vận chuyển hàng hóa:
+* **Docker Compose giống như một "Chiếc xe tải chở hàng":** Bạn chở đồ đạc trong nội thành hoặc chuyển nhà (dự án vừa và nhỏ, chạy trên 1 con VPS). Chiếc xe tải này linh hoạt, chi phí thuê rẻ (4 - 5 USD/tháng), tự bạn lái được. Nếu chỉ chở vài món đồ mà thuê cả một đội tàu biển viễn dương thì vừa tốn tiền vừa cồng kềnh!
+* **Kubernetes (K8s) giống như "Đội tàu vận tải container xuyên đại dương":** Khi công ty của bạn xuất khẩu hàng triệu tấn hàng đi khắp thế giới (hệ thống phân tán trên hàng chục máy chủ, hàng triệu người dùng). Lúc này một chiếc xe tải không thể kham nổi, bắt buộc bạn phải dùng đến hệ thống cảng biển và đội tàu container với tháp điều phối không lưu chuyên nghiệp.
+
+| Tiêu chí Đánh giá | 🐳 Docker Compose (Khuyên dùng cho Dev & Startup) | ☸️ Kubernetes / K8s (Hệ thống lớn) |
 | :--- | :--- | :--- |
-| **Quy mô hạ tầng** | **1 máy chủ duy nhất (Single Node VPS)** | **Cụm hàng chục, hàng trăm máy chủ (Cluster)** |
-| **Độ phức tạp** | Rất đơn giản, học trong 1 ngày là làm chủ | Rất phức tạp, cần đội ngũ DevOps chuyên trách |
-| **Khả năng chịu lỗi** | Nếu con VPS bị cháy nguồn/mất mạng → Toàn bộ website sập | 1 máy chủ cháy nổ → Tự động dời container sang máy khác trong 5 giây |
-| **Tự động mở rộng (Autoscale)** | Không hỗ trợ tự động scale theo tải thực tế | Tự động tăng từ 3 lên 50 container khi có Flash Sale |
-| **Khi nào nên dùng?** | Startup, dự án vừa và nhỏ, chi phí tiết kiệm (1 VPS) | Doanh nghiệp lớn, thương mại điện tử, tài chính ngân hàng |
+| **Quy mô hạ tầng** | **1 máy chủ duy nhất** (Single Node VPS Ubuntu) | **Cụm nhiều máy chủ** (Cluster hàng chục đến hàng trăm Server) |
+| **Độ phức tạp & Chi phí** | Cực kỳ đơn giản, học trong 1 ngày, chi phí rẻ (từ 4 - 5 USD/tháng) | Rất phức tạp, cần đội ngũ Kỹ sư DevOps/SRE chuyên trách vận hành |
+| **Khả năng chịu lỗi (HA)** | Nếu VPS hỏng phần cứng hoặc mất mạng → Toàn bộ website dừng | 1 máy chủ cháy nổ → Tự động di dời container sang máy khác trong 5 giây |
+| **Tự động mở rộng (Autoscale)** | Không hỗ trợ tự động scale (chỉ scale thủ công bằng lệnh) | Tự động tăng từ 3 lên 50 container theo tải CPU/RAM thực tế (HPA) |
+| **Cân bằng tải & Mạng** | Dùng mạng bridge nội bộ, cấu hình Nginx reverse proxy thủ công | Tự động phân phối tải thông minh qua Ingress Controller toàn cụm |
+| **Khi nào bạn nên chọn?** | **Website công ty, ứng dụng vừa & nhỏ, MVP, Startup giai đoạn đầu** | **Sàn TMĐT lớn (Shopee/Tiki), Ngân hàng, Hệ thống triệu người dùng** |
+
+---
 
 ## 2. Hướng dẫn Từng bước Chuẩn bị VPS Thật (Chỉ mất 5 phút)
 

@@ -1,0 +1,27 @@
+# --- STAGE 1: BUILDER ---
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# --- STAGE 2: PRODUCTION HARDENED ---
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package*.json ./
+RUN npm install --omit=dev && npm cache clean --force
+COPY --from=builder /app/dist ./dist
+
+# Chạy dưới quyền user 'node' (không phải root)
+USER node
+EXPOSE 3000
+
+# Tích hợp HEALTHCHECK tự động kiểm tra API /health mỗi 5 giây
+HEALTHCHECK --interval=5s --timeout=3s --start-period=2s --retries=3 \
+  CMD wget -qO- http://localhost:3000/health || exit 1
+
+# Dùng Exec Form để tiến trình 'node' làm PID 1, trực tiếp nhận tín hiệu SIGTERM
+CMD ["node", "dist/main.js"]
